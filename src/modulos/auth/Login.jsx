@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     usuario: "",
     password: "",
@@ -49,7 +51,7 @@ const Login = () => {
       ...prevState,
       [name]: value,
     }));
-    // Limpiar error cuando el usuario empiece a escribir
+
     if (error) setError("");
   };
 
@@ -59,10 +61,19 @@ const Login = () => {
     setError("");
 
     try {
-
       const response = await api.post("/auth/login", formData);
       console.log("Login exitoso:", response.data);
       setShowSuccessModal(true);
+
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      if (response.data.rol === "0") {
+        navigate("/roles/superadmin", { state: { rol: "superadmin" } });
+      } else if (response.data.rol === "1") {
+        navigate("/roles/admin", { state: { rol: "admin" } });
+      } else if (response.data.rol === "2") {
+        navigate("/roles/alumno", { state: { rol: "alumno" } });
+      }
+
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError("Credenciales incorrectas. Por favor intenta de nuevo.");
