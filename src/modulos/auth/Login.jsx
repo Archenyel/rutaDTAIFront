@@ -1,20 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    usuario: '',
-    contraseña: ''
+    usuario: "",
+    password: "",
   });
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [progress, setProgress] = useState(0);
 
   // Credenciales estáticas para pruebas
   const credencialesValidas = {
-    usuario: 'admin',
-    contraseña: '123456'
+    usuario: "admin",
+    password: "123456",
   };
 
   // Efecto para la barra de progreso
@@ -23,14 +26,13 @@ const Login = () => {
       const duration = 5000; // 5 segundos
       const interval = 50; // Actualizar cada 50ms
       const step = (interval / duration) * 100;
-      
+
       const timer = setInterval(() => {
-        setProgress(prev => {
+        setProgress((prev) => {
           const newProgress = prev + step;
           if (newProgress >= 100) {
             clearInterval(timer);
-            // Aquí puedes agregar la lógica de redirección
-            console.log('Redirigiendo al dashboard...');
+            console.log("Redirigiendo al dashboard...");
             setShowSuccessModal(false);
             setProgress(0);
             return 100;
@@ -45,40 +47,52 @@ const Login = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
-    // Limpiar error cuando el usuario empiece a escribir
-    if (error) setError('');
+
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
-    // Simular delay de autenticación
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    if (formData.usuario === credencialesValidas.usuario && 
-        formData.contraseña === credencialesValidas.contraseña) {
+    try {
+      const response = await api.post("/auth/login", formData);
+      console.log("Login exitoso:", response.data);
       setShowSuccessModal(true);
-      // Aquí puedes agregar la lógica de redirección o manejo de sesión
-    } else {
-      setError('Credenciales incorrectas. Inténtalo de nuevo.');
-    }
-    setLoading(false);
-  };
 
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      if (response.data.rol === "0") {
+        navigate("/roles/superadmin", { state: { rol: "superadmin" } });
+      } else if (response.data.rol === "1") {
+        navigate("/roles/admin", { state: { rol: "admin" } });
+      } else if (response.data.rol === "2") {
+        navigate("/roles/alumno", { state: { rol: "alumno" } });
+      }
+
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError("Credenciales incorrectas. Por favor intenta de nuevo.");
+      } else {
+        setError("Ocurrió un error inesperado. Intenta más tarde.");
+      }
+      console.error("Error en login:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       {/* Bootstrap CSS */}
-      <link 
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" 
-        rel="stylesheet" 
+      <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+        rel="stylesheet"
       />
-      
+
       <style>
         {`
           * {
@@ -333,7 +347,7 @@ const Login = () => {
           }
         `}
       </style>
-      
+
       <div className="gradient-bg"></div>
       <div className="main-content">
         {/* Header personalizado */}
@@ -348,7 +362,10 @@ const Login = () => {
         </header>
 
         {/* Contenedor del formulario */}
-        <div className="d-flex align-items-center justify-content-center" style={{minHeight: 'calc(100vh - 120px)', padding: '2rem 1rem'}}>
+        <div
+          className="d-flex align-items-center justify-content-center"
+          style={{ minHeight: "calc(100vh - 120px)", padding: "2rem 1rem" }}
+        >
           <div className="container-fluid">
             <div className="row justify-content-center">
               <div className="col-sm-10 col-md-8 col-lg-4 col-xl-4">
@@ -361,7 +378,10 @@ const Login = () => {
                     <div>
                       {/* Campo Usuario */}
                       <div className="mb-3">
-                        <label htmlFor="usuario" className="form-label fw-medium text-primary-custom">
+                        <label
+                          htmlFor="usuario"
+                          className="form-label fw-medium text-primary-custom"
+                        >
                           Usuario
                         </label>
                         <input
@@ -378,14 +398,17 @@ const Login = () => {
 
                       {/* Campo Contraseña */}
                       <div className="mb-3">
-                        <label htmlFor="contraseña" className="form-label fw-medium text-primary-custom">
+                        <label
+                          htmlFor="password"
+                          className="form-label fw-medium text-primary-custom"
+                        >
                           Contraseña
                         </label>
                         <input
-                          id="contraseña"
+                          id="password"
                           type="password"
-                          name="contraseña"
-                          value={formData.contraseña}
+                          name="password"
+                          value={formData.password}
                           onChange={handleInputChange}
                           required
                           className="form-control form-control-lg form-control-custom"
@@ -395,7 +418,10 @@ const Login = () => {
 
                       {/* Mensaje de error */}
                       {error && (
-                        <div className="alert alert-danger alert-custom py-2 mb-3" role="alert">
+                        <div
+                          className="alert alert-danger alert-custom py-2 mb-3"
+                          role="alert"
+                        >
                           <small>{error}</small>
                         </div>
                       )}
@@ -409,11 +435,15 @@ const Login = () => {
                       >
                         {loading ? (
                           <>
-                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
                             Ingresando...
                           </>
                         ) : (
-                          'Ingresar'
+                          "Ingresar"
                         )}
                       </button>
                     </div>
@@ -421,7 +451,7 @@ const Login = () => {
                     {/* Enlaces adicionales */}
                     <div className="text-center mt-4">
                       <p className="text-secondary-custom mb-0">
-                        ¿No tienes cuenta?{' '}
+                        ¿No tienes cuenta?{" "}
                         <a href="#" className="link-custom fw-medium">
                           Regístrate aquí
                         </a>
@@ -430,9 +460,15 @@ const Login = () => {
 
                     {/* Información de prueba */}
                     <div className="alert alert-info-custom mt-4 mb-0">
-                      <p className="fw-medium mb-2 text-secondary-custom">Credenciales de prueba:</p>
-                      <small className="text-secondary-custom d-block">Usuario: admin</small>
-                      <small className="text-secondary-custom d-block">Contraseña: 123456</small>
+                      <p className="fw-medium mb-2 text-secondary-custom">
+                        Credenciales de prueba:
+                      </p>
+                      <small className="text-secondary-custom d-block">
+                        Usuario: admin
+                      </small>
+                      <small className="text-secondary-custom d-block">
+                        Contraseña: 123456
+                      </small>
                     </div>
                   </div>
                 </div>
@@ -441,28 +477,33 @@ const Login = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Modal de éxito con barra de progreso */}
       {showSuccessModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             {/* Barra de progreso */}
             <div className="progress-bar-container">
-              <div 
-                className="progress-bar" 
+              <div
+                className="progress-bar"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
-            
+
             <div className="modal-body">
               <div className="success-icon">
                 <svg fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <h3 className="modal-title">¡Inicio de sesión exitoso!</h3>
               <p className="modal-text">
-                Bienvenido a RutaDTAI. Serás redirigido al panel principal en unos momentos.
+                Bienvenido a RutaDTAI. Serás redirigido al panel principal en
+                unos momentos.
               </p>
               <p className="countdown-text">
                 Redirigiendo en {Math.ceil((100 - progress) / 20)} segundos...

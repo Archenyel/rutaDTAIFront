@@ -9,7 +9,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/roles" element={<Roles rol="admin" />} />
+        <Route path="/roles/admin" element={<Roles rol="admin" />} />
+        <Route path="/roles/superadmin" element={<Roles rol="superadmin" />} />
+        <Route path="/roles/alumno" element={<Roles rol="alumno" />} />
       </Routes>
     </Router>
   );
