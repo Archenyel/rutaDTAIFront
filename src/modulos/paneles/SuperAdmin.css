@@ -1,0 +1,274 @@
+.header-custom {
+  background: linear-gradient(90deg, #293259 0%, #537092 100%);
+  box-shadow: 0 4px 20px rgba(41, 50, 89, 0.3);
+  position: relative;
+  z-index: 10;
+  padding: 1rem 0;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-custom h1 {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  user-select: none;
+}
+
+/* Reset y base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html,
+#root {
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff; /* Fondo blanco */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50; /* Texto principal oscuro elegante */
+}
+
+.container {
+  max-width: 900px;
+  margin: 3rem auto 5rem auto;
+  padding: 0 1rem;
+}
+
+/* Título y descripción */
+h2 {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: #34495e; /* Azul grisáceo elegante */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+p {
+  color: #7f8c8d; /* Gris suave */
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Botón agregar */
+.btn-primary {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  padding: 0.6rem 1.5rem;
+  box-shadow: 0 6px 15px rgba(53, 122, 189, 0.4);
+  transition: all 0.4s ease;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #357abd, #4a90e2);
+  box-shadow: 0 10px 25px rgba(53, 122, 189, 0.6);
+  transform: translateY(-3px);
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Tabla */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 14px;
+  font-size: 1rem;
+  color: #2c3e50;
+  table-layout: fixed;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.table th,
+.table td {
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: none;
+  text-align: left;
+  vertical-align: middle;
+  transition: background-color 0.3s ease;
+}
+
+.table th {
+  font-weight: 700;
+  color: #34495e;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.table tbody tr:hover td {
+  background: #4a90e2;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Botones de acción */
+.btn-warning,
+.btn-danger {
+  border-radius: 12px;
+  font-weight: 700;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.9rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.btn-warning {
+  background: #f39c12;
+  border: none;
+  color: white;
+  box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+}
+
+.btn-warning:hover {
+  background: #d68910;
+  box-shadow: 0 8px 25px rgba(214, 137, 16, 0.6);
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  border: none;
+  color: white;
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+  box-shadow: 0 8px 25px rgba(192, 57, 43, 0.6);
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+/* Modal fondo y overlay */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(7px);
+}
+
+/* Modal contenido */
+.modal-dialog {
+  max-width: 480px;
+  width: 90%;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  background: #fff;
+  animation: slideIn 0.3s ease-out;
+  border: none;
+}
+
+/* Modal header */
+.modal-header {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  padding: 1rem 1.5rem;
+  color: white;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botón cerrar modal */
+.btn-close {
+  filter: invert(1);
+  opacity: 0.7;
+  transition: opacity 0.25s ease;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+}
+
+.btn-close:hover {
+  opacity: 1;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Modal body */
+.modal-body {
+  padding: 2rem 2rem;
+  color: #34495e;
+}
+
+/* Labels y inputs */
+.form-label {
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.form-control {
+  border: 2px solid #dfe6e9;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  color: #2c3e50;
+  background: #f7f9fc;
+  box-shadow: inset 0 2px 5px rgb(255 255 255 / 0.8);
+}
+
+.form-control:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px 0 rgba(74, 144, 226, 0.5);
+  outline: none;
+}
+
+/* Modal footer */
+.modal-footer {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  background: transparent;
+  border-top: none;
+}
+
+/* Animación */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
