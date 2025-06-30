@@ -18,7 +18,7 @@ const Login = () => {
   // Efecto para barra de progreso
   useEffect(() => {
     if (showSuccessModal) {
-      const duration = 5000;
+      const duration = 4000;
       const interval = 50;
       const step = (interval / duration) * 100;
 
@@ -77,42 +77,33 @@ const Login = () => {
     }
   };
 
-
   return (
     <>
-      <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
-        rel="stylesheet"
-      />
-
       <div className="gradient-bg"></div>
       <div className="main-content">
-        <header className="header-custom text-white">
-          <div className="container-fluid py-4">
+        <header className="header-custom">
+          <div className="container-fluid py-3">
             <div className="row">
               <div className="col">
-                <h1 className="h4 fw-bold mb-0">RutaDTAI</h1>
+                <h1 className="brand-title">RutaDTAI</h1>
               </div>
             </div>
           </div>
         </header>
 
-        <div
-          className="d-flex align-items-center justify-content-center"
-          style={{ minHeight: "calc(100vh - 120px)", padding: "2rem 1rem" }}
-        >
+        <div className="login-container">
           <div className="container-fluid">
             <div className="row justify-content-center">
-              <div className="col-sm-10 col-md-8 col-lg-4 col-xl-4">
-                <div className="card card-custom shadow-lg">
-                  <div className="card-body p-4">
-                    <h3 className="card-title text-center text-primary-custom mb-4 fw-bold">
+              <div className="col-sm-10 col-md-8 col-lg-5 col-xl-4">
+                <div className="login-card">
+                  <div className="card-body-custom">
+                    <h2 className="login-title">
                       Bienvenido a tu gestor de proyectos
-                    </h3>
+                    </h2>
 
                     <form onSubmit={handleSubmit}>
-                      <div className="mb-3">
-                        <label htmlFor="usuario" className="form-label">
+                      <div className="form-group-custom">
+                        <label htmlFor="usuario" className="form-label-custom">
                           Usuario
                         </label>
                         <input
@@ -121,14 +112,14 @@ const Login = () => {
                           name="usuario"
                           value={formData.usuario}
                           onChange={handleInputChange}
-                          className="form-control"
+                          className="form-input-custom"
                           required
                           placeholder="Ingresa tu usuario"
                         />
                       </div>
 
-                      <div className="mb-3">
-                        <label htmlFor="password" className="form-label">
+                      <div className="form-group-custom">
+                        <label htmlFor="password" className="form-label-custom">
                           Contraseña
                         </label>
                         <input
@@ -137,30 +128,26 @@ const Login = () => {
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
-                          className="form-control"
+                          className="form-input-custom"
                           required
                           placeholder="Ingresa tu contraseña"
                         />
                       </div>
 
                       {error && (
-                        <div className="alert alert-danger py-2 mb-3">
+                        <div className="error-alert">
                           <small>{error}</small>
                         </div>
                       )}
 
                       <button
                         type="submit"
-                        className="btn btn-primary w-100"
+                        className="login-button"
                         disabled={loading}
                       >
                         {loading ? (
                           <>
-                            <span
-                              className="spinner-border spinner-border-sm me-2"
-                              role="status"
-                              aria-hidden="true"
-                            ></span>
+                            <span className="loading-spinner"></span>
                             Ingresando...
                           </>
                         ) : (
@@ -169,22 +156,32 @@ const Login = () => {
                       </button>
                     </form>
 
-                    <div className="text-center mt-4">
-                      <p className="text-secondary">
+                    <div className="register-link">
+                      <p>
                         ¿No tienes cuenta?{" "}
-                        <a href="#" className="fw-medium">
+                        <a href="/Registro" className="link-custom">
                           Regístrate aquí
                         </a>
                       </p>
                     </div>
 
-                    <div className="alert alert-info mt-4 mb-0">
-                      <p className="fw-medium mb-2 text-secondary">
-                        Credenciales de prueba:
-                      </p>
-                      <small className="d-block">Usuario: admin</small>
-                      <small className="d-block">Contraseña: 123456</small>
-                    </div>
+                    <div className="test-credentials">
+  <p className="credentials-title">
+    Credenciales de prueba:
+  </p>
+  <div className="credentials-group">
+    <p className="credential-role">SuperAdmin:</p>
+    <p className="credential-item">Usuario: superadmin | Contraseña: 1234</p>
+  </div>
+  <div className="credentials-group">
+    <p className="credential-role">Admin:</p>
+    <p className="credential-item">Usuario: admin | Contraseña: 1234</p>
+  </div>
+  <div className="credentials-group">
+    <p className="credential-role">Usuario:</p>
+    <p className="credential-item">Usuario: usuario | Contraseña: 1234</p>
+  </div>
+</div>
                   </div>
                 </div>
               </div>
@@ -195,7 +192,7 @@ const Login = () => {
 
       {showSuccessModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="success-modal">
             <div className="progress-bar-container">
               <div
                 className="progress-bar"
@@ -203,7 +200,7 @@ const Login = () => {
               ></div>
             </div>
 
-            <div className="modal-body">
+            <div className="modal-body-custom">
               <div className="success-icon">
                 <svg fill="currentColor" viewBox="0 0 20 20">
                   <path
