@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Registro.css";
+import api from "../../api/api";
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -8,6 +9,8 @@ const Registro = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -141,13 +144,57 @@ const Registro = () => {
 
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep()) return;
 
-    // Aqui va la api
+    setIsLoading(true);
+    setApiError("");
 
-    setShowSuccessModal(true);
+    try {
+
+      const registroData = {
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        email: formData.email,
+        telefono: formData.telefono,
+        fechaNacimiento: formData.fechaNacimiento,
+        usuario: formData.usuario,
+        password: formData.password,
+        matricula: formData.matricula,
+        carrera: formData.carrera,
+        semestre: formData.semestre,
+        campus: formData.campus
+      };
+
+      const response = await api.post('auth/registro/alumnos', registroData);
+
+      if (response.status === 200 || response.status === 201) {
+        setShowSuccessModal(true);
+      } else {
+        setApiError("Error en el registro. Por favor, inténtalo de nuevo.");
+      }
+      
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      
+      // Manejar diferentes tipos de errores
+      if (error.response) {
+        // El servidor respondió con un código de error
+        const errorMessage = error.response.data?.message || 
+                            error.response.data?.error || 
+                            "Error en el servidor. Por favor, inténtalo de nuevo.";
+        setApiError(errorMessage);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        setApiError("No se pudo conectar con el servidor. Verifica tu conexión a internet.");
+      } else {
+        // Error al configurar la petición
+        setApiError("Error inesperado. Por favor, inténtalo de nuevo.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const openTerms = (e) => {
@@ -312,6 +359,13 @@ const Registro = () => {
                   </a>
                 </label>
                 {errors.aceptaTerminos && <div className="error-message">{errors.aceptaTerminos}</div>}
+                
+                {/* Mostrar error de la API si existe */}
+                {apiError && (
+                  <div className="error-message" style={{ marginTop: "10px", textAlign: "center" }}>
+                    {apiError}
+                  </div>
+                )}
               </>
             )}
 
@@ -338,7 +392,11 @@ const Registro = () => {
                     Siguiente
                   </button>
                 )}
-                {step === 4 && <button type="submit">Registrarse</button>}
+                {step === 4 && (
+                  <button type="submit" disabled={isLoading}>
+                    {isLoading ? "Registrando..." : "Registrarse"}
+                  </button>
+                )}
               </div>
 
               {step === 1 && (
