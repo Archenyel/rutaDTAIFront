@@ -12,19 +12,20 @@ const Registro = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
+  // Estados para mostrar/ocultar contraseña
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     nombre: "",
     apellidos: "",
     email: "",
-    telefono: "",
-    fechaNacimiento: "",
     usuario: "",
     password: "",
     confirmPassword: "",
     matricula: "",
     carrera: "Ingeniería en Desarrollo y Gestión de Software",
-    semestre: "",
-    campus: "UTEQ - Querétaro",
+    cuatrimestre: "",
     aceptaTerminos: false,
   });
 
@@ -35,16 +36,15 @@ const Registro = () => {
 
   const validateUsername = (usr) => /^[a-zA-Z0-9_]{1,20}$/.test(usr);
 
-  // Efecto para barra de progreso
   useEffect(() => {
     if (showSuccessModal) {
       const duration = 4000;
       const interval = 50;
-      const step = (interval / duration) * 100;
+      const stepProgress = (interval / duration) * 100;
 
       const timer = setInterval(() => {
         setProgress((prev) => {
-          const newProgress = prev + step;
+          const newProgress = prev + stepProgress;
           if (newProgress >= 100) {
             clearInterval(timer);
             setShowSuccessModal(false);
@@ -58,32 +58,23 @@ const Registro = () => {
 
       return () => clearInterval(timer);
     }
-  }, [showSuccessModal]);
+  }, [showSuccessModal, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === "nombre" || name === "apellidos") {
+      const upperValue = value.toUpperCase();
+      setFormData((prev) => ({ ...prev, [name]: upperValue }));
+      if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
+      return;
+    }
 
     if (name === "matricula") {
       const onlyNumbers = value.replace(/\D/g, "");
       if (onlyNumbers.length > 10) return;
       setFormData((prev) => ({ ...prev, matricula: onlyNumbers }));
       if (errors.matricula) setErrors((prev) => ({ ...prev, matricula: undefined }));
-      return;
-    }
-
-    if (name === "fechaNacimiento") {
-      // Limitar a max 10 caracteres (YYYY-MM-DD)
-      if (value.length > 10) return;
-
-      const yearPart = value.slice(0, 4);
-      if (yearPart.length > 4) return;
-
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-
-      if (errors.fechaNacimiento) setErrors((prev) => ({ ...prev, fechaNacimiento: undefined }));
       return;
     }
 
@@ -101,10 +92,17 @@ const Registro = () => {
     if (step === 1) {
       if (!formData.nombre.trim()) newErrors.nombre = "Campo obligatorio.";
       if (!formData.apellidos.trim()) newErrors.apellidos = "Campo obligatorio.";
-      if (!formData.email.trim()) newErrors.email = "Campo obligatorio.";
-      if (!formData.telefono.trim()) newErrors.telefono = "Campo obligatorio.";
-      if (!formData.fechaNacimiento.trim())
-        newErrors.fechaNacimiento = "Campo obligatorio.";
+
+      const emailTrimmed = formData.email.trim();
+
+      if (!emailTrimmed) {
+        newErrors.email = "Campo obligatorio.";
+      } else {
+        const emailPattern = /^[^\s@]+@uteq\.edu\.mx$/;
+        if (!emailPattern.test(emailTrimmed)) {
+          newErrors.email = "Error, comprueba que tu correo este bien escrito.";
+        }
+      }
     } else if (step === 2) {
       if (!formData.usuario.trim()) {
         newErrors.usuario = "Campo obligatorio.";
@@ -127,8 +125,7 @@ const Registro = () => {
       }
     } else if (step === 3) {
       if (!formData.matricula.trim()) newErrors.matricula = "Campo obligatorio.";
-      if (!formData.semestre.trim()) newErrors.semestre = "Campo obligatorio.";
-    } else if (step === 4) {
+      if (!formData.cuatrimestre.trim()) newErrors.cuatrimestre = "Campo obligatorio.";
       if (!formData.aceptaTerminos) {
         newErrors.aceptaTerminos = "Debes aceptar los términos.";
       }
@@ -152,44 +149,38 @@ const Registro = () => {
     setApiError("");
 
     try {
-
       const registroData = {
         nombre: formData.nombre,
         apellidos: formData.apellidos,
         email: formData.email,
-        telefono: formData.telefono,
-        fechaNacimiento: formData.fechaNacimiento,
         usuario: formData.usuario,
         password: formData.password,
         matricula: formData.matricula,
         carrera: formData.carrera,
-        semestre: formData.semestre,
-        campus: formData.campus
+        cuatrimestre: formData.cuatrimestre,
       };
 
-      const response = await api.post('auth/registro/alumnos', registroData);
+      const response = await api.post("auth/registro/alumnos", registroData);
 
       if (response.status === 200 || response.status === 201) {
         setShowSuccessModal(true);
       } else {
         setApiError("Error en el registro. Por favor, inténtalo de nuevo.");
       }
-      
     } catch (error) {
       console.error("Error en el registro:", error);
-      
-      // Manejar diferentes tipos de errores
+
       if (error.response) {
-        // El servidor respondió con un código de error
-        const errorMessage = error.response.data?.message || 
-                            error.response.data?.error || 
-                            "Error en el servidor. Por favor, inténtalo de nuevo.";
+        const errorMessage =
+          error.response.data?.message ||
+          error.response.data?.error ||
+          "Error en el servidor. Por favor, inténtalo de nuevo.";
         setApiError(errorMessage);
       } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
-        setApiError("No se pudo conectar con el servidor. Verifica tu conexión a internet.");
+        setApiError(
+          "No se pudo conectar con el servidor. Verifica tu conexión a internet."
+        );
       } else {
-        // Error al configurar la petición
         setApiError("Error inesperado. Por favor, inténtalo de nuevo.");
       }
     } finally {
@@ -209,7 +200,7 @@ const Registro = () => {
     "TSU en Tecnologías de la Información Área Desarrollo de Software Multiplataforma",
   ];
 
-  const opcionesSemestre = [
+  const opcionesCuatrimestre = [
     "1er cuatrimestre",
     "2do cuatrimestre",
     "3er cuatrimestre",
@@ -221,12 +212,6 @@ const Registro = () => {
     "9no cuatrimestre",
     "10mo cuatrimestre",
     "11vo cuatrimestre",
-  ];
-
-  const opcionesCampus = [
-    "UTEQ - Querétaro",
-    "UTEQ - San Juan del Río",
-    "UTEQ - Otros",
   ];
 
   return (
@@ -247,7 +232,7 @@ const Registro = () => {
           <h2 className="registro-title">Registro UTEQ – RutaDTAI</h2>
 
           <div className="registro-step-indicator">
-            {[1, 2, 3, 4].map((n) => (
+            {[1, 2, 3].map((n) => (
               <div
                 key={n}
                 className={`registro-step-circle ${step === n ? "active" : ""}`}
@@ -262,24 +247,35 @@ const Registro = () => {
             {step === 1 && (
               <>
                 <label>Nombre:</label>
-                <input name="nombre" value={formData.nombre} onChange={handleChange} />
-                {errors.nombre && <div className="error-message">{errors.nombre}</div>}
+                <input
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                />
+                {errors.nombre && (
+                  <div className="error-message">{errors.nombre}</div>
+                )}
 
                 <label>Apellidos:</label>
-                <input name="apellidos" value={formData.apellidos} onChange={handleChange} />
-                {errors.apellidos && <div className="error-message">{errors.apellidos}</div>}
+                <input
+                  name="apellidos"
+                  value={formData.apellidos}
+                  onChange={handleChange}
+                />
+                {errors.apellidos && (
+                  <div className="error-message">{errors.apellidos}</div>
+                )}
 
                 <label>Email:</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} />
-                {errors.email && <div className="error-message">{errors.email}</div>}
-
-                <label>Teléfono:</label>
-                <input type="tel" name="telefono" value={formData.telefono} onChange={handleChange} />
-                {errors.telefono && <div className="error-message">{errors.telefono}</div>}
-
-                <label>Fecha de nacimiento:</label>
-                <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} />
-                {errors.fechaNacimiento && <div className="error-message">{errors.fechaNacimiento}</div>}
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {errors.email && (
+                  <div className="error-message">{errors.email}</div>
+                )}
               </>
             )}
 
@@ -287,21 +283,83 @@ const Registro = () => {
             {step === 2 && (
               <>
                 <label>Usuario:</label>
-                <input name="usuario" value={formData.usuario} onChange={handleChange} />
-                {errors.usuario && <div className="error-message">{errors.usuario}</div>}
-
-                <label>Contraseña:</label>
-                <input type="password" name="password" value={formData.password} onChange={handleChange} />
-                {errors.password && <div className="error-message">{errors.password}</div>}
-
-                <label>Confirmar contraseña:</label>
                 <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
+                  name="usuario"
+                  value={formData.usuario}
                   onChange={handleChange}
                 />
-                {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+                {errors.usuario && (
+                  <div className="error-message">{errors.usuario}</div>
+                )}
+
+                <label>Contraseña:</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    maxLength={25}
+                    value={formData.password}
+                    onChange={handleChange}
+                    style={{ paddingRight: "30px" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: "absolute",
+                      right: 5,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      fontSize: "14px",
+                      color: "#0a47a1",
+                    }}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  >
+                    {showPassword ? "Ocultar" : "Mostrar"}
+                  </button>
+                </div>
+                {errors.password && (
+                  <div className="error-message">{errors.password}</div>
+                )}
+
+                <label>Confirmar contraseña:</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    style={{ paddingRight: "30px" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={{
+                      position: "absolute",
+                      right: 5,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      fontSize: "14px",
+                      color: "#0a47a1",
+                    }}
+                    aria-label={
+                      showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                    }
+                  >
+                    {showConfirmPassword ? "Ocultar" : "Mostrar"}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <div className="error-message">{errors.confirmPassword}</div>
+                )}
               </>
             )}
 
@@ -309,11 +367,22 @@ const Registro = () => {
             {step === 3 && (
               <>
                 <label>Matrícula:</label>
-                <input name="matricula" value={formData.matricula} onChange={handleChange} maxLength={10} />
-                {errors.matricula && <div className="error-message">{errors.matricula}</div>}
+                <input
+                  name="matricula"
+                  value={formData.matricula}
+                  onChange={handleChange}
+                  maxLength={10}
+                />
+                {errors.matricula && (
+                  <div className="error-message">{errors.matricula}</div>
+                )}
 
                 <label>Carrera:</label>
-                <select name="carrera" value={formData.carrera} onChange={handleChange}>
+                <select
+                  name="carrera"
+                  value={formData.carrera}
+                  onChange={handleChange}
+                >
                   {opcionesCarrera.map((op) => (
                     <option key={op} value={op}>
                       {op}
@@ -321,31 +390,24 @@ const Registro = () => {
                   ))}
                 </select>
 
-                <label>Semestre:</label>
-                <select name="semestre" value={formData.semestre} onChange={handleChange}>
-                  <option value="">Selecciona un semestre</option>
-                  {opcionesSemestre.map((op) => (
+                <label>Cuatrimestre:</label>
+                <select
+                  name="cuatrimestre"
+                  value={formData.cuatrimestre}
+                  onChange={handleChange}
+                  className="mb-3"
+                >
+                  <option value="">Selecciona un cuatrimestre</option>
+                  {opcionesCuatrimestre.map((op) => (
                     <option key={op} value={op}>
                       {op}
                     </option>
                   ))}
                 </select>
-                {errors.semestre && <div className="error-message">{errors.semestre}</div>}
+                {errors.cuatrimestre && (
+                  <div className="error-message">{errors.cuatrimestre}</div>
+                )}
 
-                <label>Campus/Sede:</label>
-                <select name="campus" value={formData.campus} onChange={handleChange}>
-                  {opcionesCampus.map((op) => (
-                    <option key={op} value={op}>
-                      {op}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
-
-            {/* Paso 4 */}
-            {step === 4 && (
-              <>
                 <label>
                   <input
                     type="checkbox"
@@ -358,18 +420,21 @@ const Registro = () => {
                     términos y condiciones
                   </a>
                 </label>
-                {errors.aceptaTerminos && <div className="error-message">{errors.aceptaTerminos}</div>}
-                
-                {/* Mostrar error de la API si existe */}
+                {errors.aceptaTerminos && (
+                  <div className="error-message">{errors.aceptaTerminos}</div>
+                )}
+
                 {apiError && (
-                  <div className="error-message" style={{ marginTop: "10px", textAlign: "center" }}>
+                  <div
+                    className="error-message"
+                    style={{ marginTop: "10px", textAlign: "center" }}
+                  >
                     {apiError}
                   </div>
                 )}
               </>
             )}
 
-            {/* Navegación */}
             <div
               className="registro-navigation"
               style={{
@@ -387,12 +452,12 @@ const Registro = () => {
               </div>
 
               <div style={{ flexGrow: 1, marginLeft: "10px" }}>
-                {step < 4 && (
+                {step < 3 && (
                   <button type="button" onClick={nextStep}>
                     Siguiente
                   </button>
                 )}
-                {step === 4 && (
+                {step === 3 && (
                   <button type="submit" disabled={isLoading}>
                     {isLoading ? "Registrando..." : "Registrarse"}
                   </button>
@@ -424,17 +489,18 @@ const Registro = () => {
               <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3>Términos y Condiciones de Uso</h3>
                 <p>
-                  Al registrarte en esta plataforma, aceptas que la información proporcionada es veraz
-                  y que será utilizada para fines académicos y administrativos relacionados con la
-                  Universidad Tecnológica de Querétaro.
+                  Al registrarte en esta plataforma, aceptas que la información proporcionada es
+                  veraz y que será utilizada para fines académicos y administrativos relacionados
+                  con la Universidad Tecnológica de Querétaro.
                 </p>
                 <p>
                   Te comprometes a utilizar esta aplicación de manera responsable, respetando los
                   reglamentos y normativas institucionales vigentes.
                 </p>
                 <p>
-                  La Universidad Tecnológica de Querétaro y RutaDTAI no se hacen responsables por el
-                  uso indebido de la información o por daños derivados del mal uso de la plataforma.
+                  La Universidad Tecnológica de Querétaro y RutaDTAI no se hacen responsables por
+                  el uso indebido de la información o por daños derivados del mal uso de la
+                  plataforma.
                 </p>
                 <p>
                   Esta plataforma puede recopilar y almacenar datos personales para mejorar el

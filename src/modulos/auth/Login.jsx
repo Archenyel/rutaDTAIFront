@@ -178,7 +178,7 @@ const Login = () => {
     <p className="credential-item">Usuario: admin | Contraseña: 1234</p>
   </div>
   <div className="credentials-group">
-    <p className="credential-role">Usuario:</p>
+    <p className="credential-role">Alumno:</p>
     <p className="credential-item">Usuario: usuario | Contraseña: 1234</p>
   </div>
 </div>

@@ -1,0 +1,76 @@
+.layout-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  margin: 0;
+  padding: 0;
+}
+
+.layout-content {
+  flex: 1;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  /* Evitar efectos extraños de hover */
+  position: relative;
+  z-index: 1;
+}
+
+.layout-header {
+  background: linear-gradient(90deg, #293259 0%, #537092 100%);
+  color: white;
+  box-shadow: 0 2px 20px rgba(41, 50, 89, 0.15);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  /* Evitar transiciones no deseadas */
+  transition: none;
+}
+
+/* Evitar el efecto de "dos pantallas" */
+.layout-content * {
+  transition: all 0.2s ease;
+}
+
+/* Asegurar que no haya overflow horizontal */
+.layout-wrapper, .layout-content {
+  overflow-x: hidden;
+}
+
+/* Estilos específicos para el footer */
+.layout-footer {
+  background: #1a1a1a;
+  color: white;
+  padding: 8px 0;
+  margin-top: auto;
+  width: 100%;
+}
+
+.header-btn {
+  background-color: #ffffff;
+  color: #293259;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.header-btn:hover {
+  background-color: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.logout-btn {
+  background-color: #e53e3e;
+  color: white;
+}
+
+.logout-btn:hover {
+  background-color: #c53030;
+}
