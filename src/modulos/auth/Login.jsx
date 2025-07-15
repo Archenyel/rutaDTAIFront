@@ -62,7 +62,7 @@ const Login = () => {
       const rol = response.data.rol;
 
       if (rol === "0") navigate("/superadmin");
-      else if (rol === "1") navigate("/admin");
+      else if (rol === "1") navigate("/dashboardAdmin");
       else if (rol === "2") navigate("/alumno");
       else navigate("/");
     } catch (error) {
