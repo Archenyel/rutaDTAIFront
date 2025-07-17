@@ -61,8 +61,8 @@ const Login = () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
       const rol = response.data.rol;
 
-      if (rol === "0") navigate("/superadmin");
-      else if (rol === "1") navigate("/admin");
+      if (rol === "0") navigate("/dashboardSuperadmin");
+      else if (rol === "1") navigate("/dashboardAdmin");
       else if (rol === "2") navigate("/alumno");
       else navigate("/");
     } catch (error) {
@@ -178,7 +178,7 @@ const Login = () => {
     <p className="credential-item">Usuario: admin | Contraseña: 1234</p>
   </div>
   <div className="credentials-group">
-    <p className="credential-role">Usuario:</p>
+    <p className="credential-role">Alumno:</p>
     <p className="credential-item">Usuario: usuario | Contraseña: 1234</p>
   </div>
 </div>

@@ -1,7 +1,6 @@
 /* Fondo general */
 body,
 .registro-main-content {
-    background: linear-gradient(to right, #2c3e50, #3498db);
     min-height: 100vh;
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -71,7 +70,7 @@ body,
 .registro-form label {
     display: block;
     margin-top: 15px;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-weight: 600;
     color: #2c3e50;
 }
@@ -80,6 +79,7 @@ body,
 .registro-form select {
     width: 100%;
     padding: 10px 12px;
+    margin-bottom: 7px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
@@ -93,7 +93,7 @@ body,
 .registro-form input:focus,
 .registro-form select:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
     background-color: white;
 }
 
@@ -159,20 +159,20 @@ body,
 
 /* Modal - contenido */
 .modal-content {
-    background: #fff;
-    padding: 30px 35px;
-    max-width: 650px;
-    max-height: 75vh;
-    border-radius: 12px;
-    box-shadow:
-        0 8px 16px rgba(0, 0, 0, 0.25),
-        0 4px 8px rgba(0, 0, 0, 0.15);
-    color: #222;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    position: relative;
-    line-height: 1.6;
+  background-color: #ffffff !important;
+  border-radius: 20px !important; /* menos extremo, más visible */
+  padding: 30px 35px;
+  max-width: 650px;
+  max-height: 75vh;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  position: relative;
+  line-height: 1.6;
+  opacity: 1 !important;
+  z-index: 10000;
 }
 
 .modal-content h3 {

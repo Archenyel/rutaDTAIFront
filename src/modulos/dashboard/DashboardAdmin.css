@@ -1,0 +1,552 @@
+/* Dashboard Administrador Styles */
+
+/* Variables CSS para consistencia */
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #0dcaf0;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --border-radius: 0.75rem;
+  --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --transition: all 0.3s ease;
+}
+
+/* Configuración general del dashboard */
+.dashboard-admin {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 0;
+  position: relative;
+}
+
+/* Configuración para modo oscuro */
+[data-bs-theme="dark"] .dashboard-admin {
+  background: linear-gradient(135deg, #212529 0%, #343a40 100%);
+}
+
+/* Botón de cambio de tema */
+.theme-toggle {
+  top: 5rem;
+  right: 1.5rem;
+  z-index: 1050;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-medium);
+}
+
+.theme-icon {
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(180deg);
+}
+
+[data-bs-theme="dark"] .theme-toggle {
+  background: rgba(33, 37, 41, 0.9);
+  border-color: var(--info-color);
+}
+
+/* Header del administrador */
+.admin-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+  margin-bottom: 2rem;
+}
+
+[data-bs-theme="dark"] .admin-header {
+  background: rgba(33, 37, 41, 0.95);
+}
+
+.welcome-title {
+  background: linear-gradient(45deg, var(--primary-color), var(--info-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInUp 0.6s ease;
+}
+
+.admin-badge {
+  background: linear-gradient(45deg, var(--success-color), #20c997);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: var(--box-shadow);
+}
+
+/* Filtros del administrador */
+.admin-filters .form-select {
+  border-radius: var(--border-radius);
+  border: 1px solid #dee2e6;
+  background: rgba(255, 255, 255, 0.9);
+  transition: var(--transition);
+}
+
+.admin-filters .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+[data-bs-theme="dark"] .admin-filters .form-select {
+  background: rgba(33, 37, 41, 0.9);
+  border-color: #495057;
+  color: #fff;
+}
+
+/* Tarjetas de estadísticas */
+.admin-stat-card {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  pointer-events: none;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Gradientes para las tarjetas */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color), #0056b3);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, var(--success-color), #146c43);
+}
+
+.gradient-info {
+  background: linear-gradient(135deg, var(--info-color), #0aa2c0);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, var(--warning-color), #cc9a00);
+}
+
+.icon-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Navegación por pestañas */
+.admin-nav {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="dark"] .admin-nav {
+  background: rgba(33, 37, 41, 0.95);
+}
+
+.admin-nav .nav-link {
+  color: var(--secondary-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: var(--transition);
+  border: none;
+  margin-right: 0.5rem;
+}
+
+.admin-nav .nav-link:hover {
+  background: rgba(13, 110, 253, 0.1);
+  color: var(--primary-color);
+}
+
+.admin-nav .nav-link.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--box-shadow);
+}
+
+/* Tarjetas modernas */
+.modern-card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.modern-card:hover {
+  box-shadow: var(--box-shadow-lg);
+}
+
+.modern-card .card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .modern-card {
+  background: var(--dark-color);
+  border: 1px solid #495057;
+}
+
+[data-bs-theme="dark"] .modern-card .card-header {
+  background: var(--dark-color);
+  border-bottom-color: #495057;
+}
+
+/* Distribución de tareas */
+.tasks-distribution {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.task-stat {
+  text-align: center;
+  transition: var(--transition);
+}
+
+.task-stat:hover {
+  transform: translateY(-5px);
+}
+
+.task-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+}
+
+.task-circle:hover {
+  transform: scale(1.1);
+  box-shadow: var(--box-shadow-lg);
+}
+
+.task-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.task-label {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Items de alertas */
+.alert-item {
+  transition: var(--transition);
+  border-left: 4px solid transparent;
+}
+
+.alert-item:hover {
+  background: rgba(13, 110, 253, 0.05);
+  border-left-color: var(--primary-color);
+}
+
+/* Contenedor de progreso */
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.custom-progress {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-progress .progress-bar {
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+/* Tablas */
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--secondary-color);
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem;
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* Avatar de usuario */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 110, 253, 0.1);
+}
+
+/* Estadísticas de carrera */
+.career-stat {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  background: rgba(13, 110, 253, 0.05);
+  transition: var(--transition);
+}
+
+.career-stat:hover {
+  background: rgba(13, 110, 253, 0.1);
+}
+
+/* Items de documentos */
+.document-item {
+  transition: var(--transition);
+  border-left: 4px solid transparent;
+}
+
+.document-item:hover {
+  background: rgba(13, 110, 253, 0.05);
+  border-left-color: var(--primary-color);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease;
+  animation-fill-mode: both;
+}
+
+/* Badges personalizados */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+}
+
+.rounded-pill {
+  border-radius: 50rem;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .dashboard-admin {
+    padding: 1rem 0;
+  }
+  
+  .admin-header {
+    padding: 1.5rem;
+  }
+  
+  .admin-filters .row {
+    flex-direction: column;
+  }
+  
+  .admin-filters .col {
+    margin-bottom: 0.5rem;
+  }
+  
+  .tasks-distribution {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .task-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .task-number {
+    font-size: 1.2rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+  
+  .admin-badge {
+    display: block;
+    margin-top: 1rem;
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .admin-nav {
+    padding: 0.5rem;
+  }
+  
+  .admin-nav .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+}
+
+/* Mejoras para modo oscuro */
+[data-bs-theme="dark"] .table {
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .table th {
+  border-bottom-color: #495057;
+}
+
+[data-bs-theme="dark"] .table td {
+  border-top-color: #495057;
+}
+
+[data-bs-theme="dark"] .career-stat {
+  background: rgba(108, 117, 125, 0.1);
+}
+
+[data-bs-theme="dark"] .career-stat:hover {
+  background: rgba(108, 117, 125, 0.2);
+}
+
+/* Efectos de hover mejorados */
+.btn {
+  transition: var(--transition);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--dark-color);
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #495057;
+}
+
+/* Mejoras de accesibilidad */
+.btn:focus,
+.form-select:focus,
+.nav-link:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Estados de loading */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Estilos para el resumen de tareas */
+.task-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Mejoras para tooltips */
+.tooltip {
+  font-size: 0.875rem;
+}
+
+.tooltip-inner {
+  border-radius: var(--border-radius);
+}
+
+/* Transiciones suaves para todos los elementos */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #6f42c1, #5a2aa2); /* Purple gradient */
+}
+
+.gradient-teal {
+  background: linear-gradient(135deg, #20c997, #138a63); /* Teal gradient */
+}
