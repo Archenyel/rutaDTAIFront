@@ -61,7 +61,7 @@ const Login = () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
       const rol = response.data.rol;
 
-      if (rol === "0") navigate("/superadmin");
+      if (rol === "0") navigate("/dashboardSuperadmin");
       else if (rol === "1") navigate("/dashboardAdmin");
       else if (rol === "2") navigate("/alumno");
       else navigate("/");

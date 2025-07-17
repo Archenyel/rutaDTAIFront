@@ -30,7 +30,7 @@ const initialData = {
       priority: "alta",
       assignee: "Administrador",
       progress: 0,
-      comments: [],                             // <- ahora serán objetos {author, text}
+      comments: [],
     },
   ],
   "En progreso": [

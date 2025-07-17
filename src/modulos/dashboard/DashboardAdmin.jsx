@@ -328,10 +328,10 @@ const DashboardAdmin = ({ user }) => {
                       </div>
                       <p className="task-label">Completadas</p>
                     </div>
-<a href="/adminKanban" className="btn btn-primary btn-sm rounded-pill" style={{ width: "550px" }}>
-  <i className="bi bi-kanban me-2"></i>
-  Ir al tablero
-</a>
+                  <a href="/adminKanban" className="btn btn-primary btn-sm rounded-pill" style={{ width: "550px" }}>
+                    <i className="bi bi-kanban me-2"></i>
+                    Ir al tablero
+                  </a>
                   </div>
                 </Card.Body>
               </Card>
