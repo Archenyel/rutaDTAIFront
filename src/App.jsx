@@ -16,7 +16,7 @@ import SuperAdmin from "./modulos/dashboard/DashboardSuperadmin";
 import Portafolios from "./modulos/dashboard/cards/Portafolios";
 import Programas from "./modulos/dashboard/cards/Programas";
 import Proyecto from "./modulos/proyectos/Proyecto";
-
+import GestionProyectos from "./modulos/dashboard/gestionProyectos/GestionProyectos";
 
 function App() {
   return (
@@ -36,6 +36,8 @@ function App() {
         <Route path="/proyectos/:id" element={<Layout><Proyecto /></Layout>} />
         <Route path="/portafolios" element={<Portafolios />} />
         <Route path="/programas" element={<Programas />} />
+        <Route path="/gestionProyectos" element={<Layout><GestionProyectos /></Layout>} />
+
 
       </Routes>
     </Router>
