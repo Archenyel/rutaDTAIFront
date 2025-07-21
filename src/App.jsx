@@ -17,6 +17,7 @@ import Portafolios from "./modulos/dashboard/cards/Portafolios";
 import Programas from "./modulos/dashboard/cards/Programas";
 import Proyecto from "./modulos/proyectos/Proyecto";
 import GestionProyectos from "./modulos/dashboard/gestionProyectos/GestionProyectos";
+import ListaProyectos from "./componentes/listaProyectos";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/portafolios" element={<Portafolios />} />
         <Route path="/programas" element={<Programas />} />
         <Route path="/gestionProyectos" element={<Layout><GestionProyectos /></Layout>} />
+        <Route path="/listaProyectos" element={<Layout><ListaProyectos /></Layout>} />
 
 
       </Routes>
