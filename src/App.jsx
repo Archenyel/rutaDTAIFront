@@ -32,7 +32,7 @@ function App() {
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/dashboardAlumno" element={<Layout><DashboardAlumno /></Layout>} />
         <Route path="/dashboardAdmin" element={<Layout><DashboardAdmin /></Layout>} />
-        <Route path="/adminKanban" element={<Layout><AdminKanban /></Layout>} />
+        <Route path="/adminKanban/:id" element={<Layout><AdminKanban /></Layout>} />
         <Route path="/SuperadminKanban" element={<Layout><SuperadminKanban /></Layout>} />
         <Route path="/proyectos/:id" element={<Layout><Proyecto /></Layout>} />
         <Route path="/portafolios" element={<Portafolios />} />

@@ -552,7 +552,7 @@ const ListaProyectos = () => {
                           <div className="d-flex gap-2 justify-content-end">
                             <Button 
                               as={Link}
-                              to={`/proyecto/${proyecto.id}`}
+                              to={`/adminKanban/${proyecto.id}`}
                               variant="outline-success" 
                               size="sm"
                               title="Ver proyecto"

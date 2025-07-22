@@ -3,6 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./Layout.css";
 
 const Layout = ({ children }) => {
+
+  console.log(localStorage.getItem("userRole"));
+  console.log(localStorage.getItem("userId"));
+  console.log(localStorage.getItem("userName"));
+
   const location = useLocation();
   const navigate = useNavigate();
 

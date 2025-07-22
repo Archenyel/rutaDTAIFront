@@ -425,7 +425,7 @@ const DashboardSuperadmin = ({ user }) => {
                   <Col md={6} lg={3}>
                     <Card 
                       as={Link} 
-                      to="/proyectos" 
+                      to="/listaproyectos" 
                       className="text-center border-0 shadow-sm h-100 navigation-card gradient-info"
                       style={{ cursor: "pointer", textDecoration: "none" }}
                     >
