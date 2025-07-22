@@ -474,7 +474,7 @@ const Programas = () => {
                             <div className="d-flex gap-2 justify-content-end">
                               <Button 
                                 as={Link}
-                                to={`/programa/${programa.id}`}
+                                to={`/listaProyectos`}
                                 variant="outline-primary" 
                                 size="sm"
                                 title="Ver programa"
