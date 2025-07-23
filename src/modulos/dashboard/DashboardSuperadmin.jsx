@@ -374,6 +374,92 @@ const DashboardSuperadmin = ({ user }) => {
             </Col>
           ))}
         </Row>
+
+                {/* Sección de Navegación con Botones */}
+        <Row className="g-4 mb-5">
+          <Col lg={12}>
+            <Card className="shadow-sm modern-card">
+              <Card.Header className="bg-white border-0 p-4">
+                <h5 className="mb-0 fw-bold">
+                  <i className="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>
+                  Gestión del Sistema
+                </h5>
+                <small className="text-muted">Acceso rápido a los módulos principales</small>
+              </Card.Header>
+              <Card.Body className="p-4">
+                <Row className="g-3">
+                  <Col md={6} lg={3}>
+                    <Card 
+                      as={Link} 
+                      to="/portafolios" 
+                      className="text-center border-0 shadow-sm h-100 navigation-card gradient-primary"
+                      style={{ cursor: "pointer", textDecoration: "none" }}
+                    >
+                      <Card.Body className="p-4">
+                        <div className="icon-container mb-3">
+                          <i className="bi bi-briefcase-fill fs-1 text-white"></i>
+                        </div>
+                        <h6 className="text-white fw-bold mb-2">Portafolios</h6>
+                        <small className="text-white-50">Gestionar portafolios digitales</small>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  
+                  <Col md={6} lg={3}>
+                    <Card 
+                      as={Link} 
+                      to="/programas" 
+                      className="text-center border-0 shadow-sm h-100 navigation-card gradient-success"
+                      style={{ cursor: "pointer", textDecoration: "none" }}
+                    >
+                      <Card.Body className="p-4">
+                        <div className="icon-container mb-3">
+                          <i className="bi bi-briefcase fs-1 text-white"></i>
+                        </div>
+                        <h6 className="text-white fw-bold mb-2">Programas</h6>
+                        <small className="text-white-50">Administrar programas académicos</small>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  
+                  <Col md={6} lg={3}>
+                    <Card 
+                      as={Link} 
+                      to="/listaproyectos" 
+                      className="text-center border-0 shadow-sm h-100 navigation-card gradient-info"
+                      style={{ cursor: "pointer", textDecoration: "none" }}
+                    >
+                      <Card.Body className="p-4">
+                        <div className="icon-container mb-3">
+                          <i className="bi bi-folder-check fs-1 text-white"></i>
+                        </div>
+                        <h6 className="text-white fw-bold mb-2">Proyectos</h6>
+                        <small className="text-white-50">Supervisar todos los proyectos</small>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  
+                  <Col md={6} lg={3}>
+                    <Card 
+                      as={Link} 
+                      to="/usuarios-administradores" 
+                      className="text-center border-0 shadow-sm h-100 navigation-card gradient-warning"
+                      style={{ cursor: "pointer", textDecoration: "none" }}
+                    >
+                      <Card.Body className="p-4">
+                        <div className="icon-container mb-3">
+                          <i className="bi bi-people-fill fs-1 text-white"></i>
+                        </div>
+                        <h6 className="text-white fw-bold mb-2">Usuarios</h6>
+                        <small className="text-white-50">Gestionar usuarios y admins</small>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
         
         {/* Sección de Distribución de Tareas y Alertas */}
         <Row className="g-4 mb-5">
@@ -457,369 +543,7 @@ const DashboardSuperadmin = ({ user }) => {
           </Col>
         </Row>
 
-        {/* Navegación por pestañas */}
-        <Nav variant="pills" className="admin-nav mb-4">
-          <Nav.Item>
-            <Nav.Link active={activeTab === "proyectos"} onClick={() => setActiveTab("proyectos")}>
-              <i className="bi bi-folder me-2"></i>
-              Proyectos
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link active={activeTab === "alumnos"} onClick={() => setActiveTab("alumnos")}>
-              <i className="bi bi-person-lines-fill me-2"></i>
-              Alumnos
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link active={activeTab === "admins"} onClick={() => setActiveTab("admins")}>
-              <i className="bi bi-person-gear me-2"></i>
-              Administradores
-            </Nav.Link>
-          </Nav.Item>
-        </Nav>
 
-        {activeTab === "proyectos" && (
-          <Card className="shadow-sm modern-card">
-            <Card.Header className="bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 fw-bold">
-                <i className="bi bi-folder-check me-2 text-primary"></i>
-                Gestión de Proyectos
-              </h5>
-              <Button variant="primary" onClick={() => setShowProyectoModal(true)}>
-                <i className="bi bi-plus-circle me-2"></i>
-                Agregar Proyecto
-              </Button>
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div className="table-responsive">
-                <Table hover className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Tipo</th>
-                      <th>Participantes</th>
-                      <th>Estado</th>
-                      <th>Prioridad</th>
-                      <th>Inicio</th>
-                      <th>Fin</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {proyectos.map((p) => (
-                      <tr key={p.id}>
-                        <td>{p.nombre}</td>
-                        <td>{p.tipo}</td>
-                        <td>{p.participantes}</td>
-                        <td>
-                          <Badge bg={p.estado === "Finalizado" ? "success" : "primary"}>{p.estado}</Badge>
-                        </td>
-                        <td>
-                          <Badge bg={p.prioridad === "Alta" ? "danger" : p.prioridad === "Media" ? "warning" : "secondary"}>
-                            {p.prioridad}
-                          </Badge>
-                        </td>
-                        <td>{p.inicio}</td>
-                        <td>{p.fin}</td>
-                        <td>
-                          <div className="action-buttons space-between">
-                            <Button variant="warning" size="sm" onClick={() => handleEditProyecto(p)}>
-                              <i className="bi bi-pencil"></i>
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => handleDeleteProyecto(p.id)}>
-                              <i className="bi bi-trash"></i>
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        )}
-
-        <Modal show={showProyectoModal} onHide={() => setShowProyectoModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>{newProyecto.id ? "Editar Proyecto" : "Agregar Nuevo Proyecto"}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
-            <Form onSubmit={handleAddOrEditProyecto}>
-              <Form.Group className="mb-3">
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newProyecto.nombre}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, nombre: e.target.value })}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Tipo</Form.Label>
-                <Form.Select
-                  value={newProyecto.tipo}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, tipo: e.target.value })}
-                >
-                  <option>Proyecto Estratégico</option>
-                  <option>Proyecto Operativo</option>
-                  <option>Proyecto de Cumplimiento</option>
-                  <option>Proyecto de Innovacion</option>
-                  <option>Proyecto de Mantenimiento</option>
-                  <option>Proyecto de Cliente</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Participantes</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={newProyecto.participantes}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, participantes: e.target.value })}
-                  min="1"
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Estado</Form.Label>
-                <Form.Select
-                  value={newProyecto.estado}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, estado: e.target.value })}
-                >
-                  <option>En progreso</option>
-                  <option>Finalizado</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Prioridad</Form.Label>
-                <Form.Select
-                  value={newProyecto.prioridad}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, prioridad: e.target.value })}
-                >
-                  <option>Alta</option>
-                  <option>Media</option>
-                  <option>Baja</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Fecha de Inicio</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={newProyecto.inicio}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, inicio: e.target.value })}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Fecha de Fin</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={newProyecto.fin}
-                  onChange={(e) => setNewProyecto({ ...newProyecto, fin: e.target.value })}
-                  required
-                />
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                {newProyecto.id ? "Actualizar Proyecto" : "Guardar Proyecto"}
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
-
-        {activeTab === "alumnos" && (
-          <Card className="shadow-sm modern-card">
-            <Card.Header className="bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 fw-bold">
-                <i className="bi bi-people-fill me-2 text-primary"></i>
-                Alumnos del Sistema
-              </h5>
-              <Button variant="primary" onClick={() => setShowAlumnoModal(true)}>
-                <i className="bi bi-plus-circle me-2"></i>
-                Agregar Alumno
-              </Button>
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div className="table-responsive">
-                <Table hover className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Carrera</th>
-                      <th>Proyectos Asignados</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alumnos.map((a) => (
-                      <tr key={a.id}>
-                        <td>{a.nombre}</td>
-                        <td>{a.carrera}</td>
-                        <td>{a.proyectos}</td>
-                        <td>
-                          <Badge bg={a.estado === "Activo" ? "success" : "secondary"}>{a.estado}</Badge>
-                        </td>
-                        <td>
-                          <div className="action-buttons">
-                            <Button variant="warning" size="sm" onClick={() => handleEditAlumno(a)}>
-                              <i className="bi bi-pencil"></i> Editar
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => handleDeleteAlumno(a.id)}>
-                              <i className="bi bi-trash"></i> Eliminar
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        )}
-
-        <Modal show={showAlumnoModal} onHide={() => setShowAlumnoModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>{newAlumno.id ? "Editar Alumno" : "Agregar Nuevo Alumno"}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
-            <Form onSubmit={handleAddOrEditAlumno}>
-              <Form.Group className="mb-3">
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newAlumno.nombre}
-                  onChange={(e) => setNewAlumno({ ...newAlumno, nombre: e.target.value })}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Carrera</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newAlumno.carrera}
-                  onChange={(e) => setNewAlumno({ ...newAlumno, carrera: e.target.value })}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Proyectos Asignados</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={newAlumno.proyectos}
-                  onChange={(e) => setNewAlumno({ ...newAlumno, proyectos: e.target.value })}
-                  min="0"
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Estado</Form.Label>
-                <Form.Select
-                  value={newAlumno.estado}
-                  onChange={(e) => setNewAlumno({ ...newAlumno, estado: e.target.value })}
-                >
-                  <option>Activo</option>
-                  <option>Inactivo</option>
-                </Form.Select>
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                {newAlumno.id ? "Actualizar Alumno" : "Guardar Alumno"}
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
-
-        {activeTab === "admins" && (
-          <Card className="shadow-sm modern-card">
-            <Card.Header className="bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0 fw-bold">
-                <i className="bi bi-person-gear me-2 text-primary"></i>
-                Administradores del Sistema
-              </h5>
-              <Button variant="primary" onClick={() => setShowAdminModal(true)}>
-                <i className="bi bi-plus-circle me-2"></i>
-                Agregar Administrador
-              </Button>
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div className="table-responsive">
-                <Table hover className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Proyectos Asignados</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {administradores.map((adm) => (
-                      <tr key={adm.id}>
-                        <td>{adm.nombre}</td>
-                        <td>{adm.proyectos}</td>
-                        <td>
-                          <Badge bg={adm.estado === "Activo" ? "success" : "secondary"}>{adm.estado}</Badge>
-                        </td>
-                        <td>
-                          <div className="action-buttons">
-                            <Button variant="warning" size="sm" onClick={() => handleEditAdmin(adm)}>
-                              <i className="bi bi-pencil"></i> Editar
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => handleDeleteAdmin(adm.id)}>
-                              <i className="bi bi-trash"></i> Eliminar
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        )}
-
-        <Modal show={showAdminModal} onHide={() => setShowAdminModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>{newAdmin.id ? "Editar Administrador" : "Agregar Nuevo Administrador"}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
-            <Form onSubmit={handleAddOrEditAdmin}>
-              <Form.Group className="mb-3">
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={newAdmin.nombre}
-                  onChange={(e) => setNewAdmin({ ...newAdmin, nombre: e.target.value })}
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Proyectos Asignados</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={newAdmin.proyectos}
-                  onChange={(e) => setNewAdmin({ ...newAdmin, proyectos: e.target.value })}
-                  min="0"
-                  required
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Estado</Form.Label>
-                <Form.Select
-                  value={newAdmin.estado}
-                  onChange={(e) => setNewAdmin({ ...newAdmin, estado: e.target.value })}
-                >
-                  <option>Activo</option>
-                  <option>Inactivo</option>
-                </Form.Select>
-              </Form.Group>
-              <Button variant="primary" type="submit">
-                {newAdmin.id ? "Actualizar Administrador" : "Guardar Administrador"}
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
       </Container>
     </Layout>
   );

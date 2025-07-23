@@ -61,6 +61,10 @@ const Login = () => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
       const rol = response.data.rol;
 
+      localStorage.setItem("userRole", rol);
+      localStorage.setItem("userId", response.data.id);
+      localStorage.setItem("userName", response.data.usuario);
+
       if (rol === "0") navigate("/dashboardSuperadmin");
       else if (rol === "1") navigate("/dashboardAdmin");
       else if (rol === "2") navigate("/alumno");
