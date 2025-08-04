@@ -1,0 +1,61 @@
+.header-custom {
+  background: linear-gradient(90deg, #293259 0%, #537092 100%);
+  box-shadow: 0 4px 20px rgba(41, 50, 89, 0.3);
+  position: relative;
+  z-index: 10;
+  padding: 1rem 0;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-custom h1 {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  user-select: none;
+}
+
+/* Reset y base igual que en las otras páginas */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff; /* Fondo blanco */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50; /* Texto principal oscuro elegante */
+}
+
+/* Contenedor principal con máximo ancho y centrado */
+.container {
+  max-width: 900px;
+  margin: 3rem auto 5rem auto;
+  padding: 0 1rem;
+}
+
+/* Contenedor específico para Alumno (puedes añadir más estilos aquí si quieres) */
+.alumno-container {
+  text-align: center;
+  padding-top: 6rem;
+}
+
+/* Título grande */
+h2 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 3rem;
+  color: #34495e; /* Azul grisáceo elegante */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Descripción */
+p {
+  color: #7f8c8d; /* Gris suave */
+  font-size: 1.3rem;
+  font-weight: 500;
+}

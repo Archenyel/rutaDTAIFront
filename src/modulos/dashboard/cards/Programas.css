@@ -1,0 +1,97 @@
+/* Portafolios.css o Programas.css */
+
+/* Contenedor principal */
+.programas-container,
+.portafolios-container {
+  padding: 20px;
+  background-color: var(--light-color);
+}
+
+/* Tarjetas */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  background-color: #fff;
+}
+
+/* Títulos */
+h1, h3, .card-title {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Botones */
+.btn-primary,
+.btn-success,
+.btn-warning,
+.btn-danger,
+.btn-secondary {
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-weight: 500;
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: #000;
+  border: none;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  border: none;
+  color: #fff;
+}
+
+/* Formularios */
+.form-label {
+  font-weight: 500;
+  color: var(--dark-color);
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  box-shadow: none;
+}
+
+/* Lista */
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 15px;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+/* Modal */
+.modal-content {
+  border-radius: 14px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  background-color: var(--light-color);
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* Spacing */
+.mt-4 {
+  margin-top: 1.5rem !important;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.me-2 {
+  margin-right: 0.5rem !important;
+}

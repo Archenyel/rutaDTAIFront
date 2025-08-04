@@ -1,0 +1,306 @@
+/* Fondo general */
+body,
+.registro-main-content {
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header superior fijo */
+.app-header {
+    width: 100%;
+    background-color: #1b2a47;
+    /* Azul oscuro */
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor */
+.registro-container {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 500px;
+    margin: 30px auto 60px auto;
+    /* margen superior para no tapar el header */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.registro-title {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Indicador de pasos */
+.registro-step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.registro-step-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #ccc;
+    color: white;
+    text-align: center;
+    line-height: 35px;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.registro-step-circle.active {
+    background-color: #3498db;
+}
+
+/* Formulario */
+.registro-form label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.registro-form input,
+.registro-form select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: white;
+    color: black;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.registro-form input:focus,
+.registro-form select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+    background-color: white;
+}
+
+/* Checkbox */
+.registro-form input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+/* Enlaces */
+.registro-form a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.registro-form a:hover {
+    text-decoration: underline;
+}
+
+/* Botones */
+.registro-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.registro-navigation button {
+    padding: 10px 20px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.registro-navigation button:hover {
+    background-color: #1a242f;
+}
+
+/* Errores */
+.error-message {
+    color: #e11d48;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+/* Modal - overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+/* Modal - contenido */
+.modal-content {
+  background-color: #ffffff !important;
+  border-radius: 20px !important; /* menos extremo, más visible */
+  padding: 30px 35px;
+  max-width: 650px;
+  max-height: 75vh;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  position: relative;
+  line-height: 1.6;
+  opacity: 1 !important;
+  z-index: 10000;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+    color: #0a47a1;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+.modal-content p {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+.modal-content button {
+    display: block;
+    margin: 20px auto 0 auto;
+    padding: 10px 25px;
+    background: #0a47a1;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.25s ease;
+    box-shadow: 0 4px 10px rgba(10, 71, 161, 0.4);
+    user-select: none;
+}
+
+.modal-content button:hover {
+    background-color: #083675;
+    box-shadow: 0 6px 14px rgba(8, 54, 117, 0.6);
+}
+
+.back-login-btn {
+  background: none;
+  border: none;
+  color: #0a47a1;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.back-login-btn:hover {
+  text-decoration: underline;
+  color: #083675;
+}
+
+/* Responsive para modal */
+@media (max-width: 700px) {
+    .modal-content {
+        max-width: 90vw;
+        max-height: 80vh;
+        padding: 25px 20px;
+    }
+
+    .modal-content h3 {
+        font-size: 1.5rem;
+    }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.success-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+  text-align: center;
+  position: relative;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #3498db;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.success-icon svg {
+  width: 40px;
+  height: 40px;
+  color: #2ecc71;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+  color: #2c3e50;
+}
+
+.modal-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.countdown-text {
+  font-size: 0.9rem;
+  color: #777;
+}

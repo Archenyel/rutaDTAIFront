@@ -1,0 +1,1439 @@
+/* Dashboard Administrador Styles */
+
+/* Variables CSS para consistencia */
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #0dcaf0;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --border-radius: 0.75rem;
+  --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --transition: all 0.3s ease; 
+}
+
+/* Configuración general del dashboard */
+.dashboard-admin {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 0;
+  position: relative;
+}
+
+/* Configuración para modo oscuro */
+[data-bs-theme="dark"] .dashboard-admin {
+  background: linear-gradient(135deg, #212529 0%, #343a40 100%);
+}
+
+/* Botón de cambio de tema */
+.theme-toggle {
+  top: 5rem;
+  right: 1.5rem;
+  z-index: 1050;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-medium);
+}
+
+.theme-icon {
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(180deg);
+}
+
+[data-bs-theme="dark"] .theme-toggle {
+  background: rgba(33, 37, 41, 0.9);
+  border-color: var(--info-color);
+}
+
+/* Header del administrador */
+.admin-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+  margin-bottom: 2rem;
+}
+
+[data-bs-theme="dark"] .admin-header {
+  background: rgba(33, 37, 41, 0.95);
+}
+
+.welcome-title {
+  background: linear-gradient(45deg, var(--primary-color), var(--info-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInUp 0.6s ease;
+}
+
+.admin-badge {
+  background: linear-gradient(45deg, var(--success-color), #20c997);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: var(--box-shadow);
+}
+
+/* Filtros del administrador */
+.admin-filters .form-select {
+  border-radius: var(--border-radius);
+  border: 1px solid #dee2e6;
+  background: rgba(255, 255, 255, 0.9);
+  transition: var(--transition);
+}
+
+.admin-filters .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+[data-bs-theme="dark"] .admin-filters .form-select {
+  background: rgba(33, 37, 41, 0.9);
+  border-color: #495057;
+  color: #fff;
+}
+
+/* Tarjetas de estadísticas */
+.admin-stat-card {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  pointer-events: none;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Gradientes para las tarjetas */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color), #0056b3);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, var(--success-color), #146c43);
+}
+
+.gradient-info {
+  background: linear-gradient(135deg, var(--info-color), #0aa2c0);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, var(--warning-color), #cc9a00);
+}
+
+.icon-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Navegación por pestañas */
+.admin-nav {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  box-shadow: var(--box-shadow);
+  backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="dark"] .admin-nav {
+  background: rgba(33, 37, 41, 0.95);
+}
+
+.admin-nav .nav-link {
+  color: var(--secondary-color);
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: var(--transition);
+  border: none;
+  margin-right: 0.5rem;
+}
+
+.admin-nav .nav-link:hover {
+  background: rgba(13, 110, 253, 0.1);
+  color: var(--primary-color);
+}
+
+.admin-nav .nav-link.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--box-shadow);
+}
+
+/* Tarjetas modernas */
+.modern-card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.modern-card:hover {
+  box-shadow: var(--box-shadow-lg);
+}
+
+.modern-card .card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .modern-card {
+  background: var(--dark-color);
+  border: 1px solid #495057;
+}
+
+[data-bs-theme="dark"] .modern-card .card-header {
+  background: var(--dark-color);
+  border-bottom-color: #495057;
+}
+
+/* Botón para agregar proyecto */
+.btn-add-project {
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: var(--transition);
+  box-shadow: var(--box-shadow);
+}
+
+.btn-add-project:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Formulario de nuevo proyecto */
+.project-form {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .project-form {
+  background: rgba(33, 37, 41, 0.95);
+  border-color: #495057;
+}
+
+.project-form .form-label {
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+}
+
+.project-form .form-control,
+.project-form .form-select {
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+  transition: var(--transition);
+}
+
+.project-form .form-control:focus,
+.project-form .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+[data-bs-theme="dark"] .project-form .form-control,
+[data-bs-theme="dark"] .project-form .form-select {
+  background: rgba(33, 37, 41, 0.8);
+  border-color: #495057;
+  color: #fff;
+}
+
+/* Botones de acción en la tabla */
+.action-buttons {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.action-buttons .btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.action-buttons .btn:hover {
+  transform: scale(1.1);
+}
+
+/* Fila de detalles del proyecto */
+.project-details-row {
+  background: rgba(13, 110, 253, 0.02);
+  border-top: 2px solid var(--primary-color);
+}
+
+[data-bs-theme="dark"] .project-details-row {
+  background: rgba(13, 110, 253, 0.05);
+}
+
+.project-details-content {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  margin: 0.5rem;
+}
+
+[data-bs-theme="dark"] .project-details-content {
+  background: rgba(33, 37, 41, 0.8);
+}
+
+.detail-item {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+[data-bs-theme="dark"] .detail-item {
+  border-bottom-color: #495057;
+}
+
+/* Modal de detalles */
+.info-card {
+  background: rgba(248, 249, 250, 0.5);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+[data-bs-theme="dark"] .info-card {
+  background: rgba(33, 37, 41, 0.5);
+  border-color: #495057;
+}
+
+.info-item {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+[data-bs-theme="dark"] .info-item {
+  border-bottom-color: #495057;
+}
+
+.progress-container-modal {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+[data-bs-theme="dark"] .progress-container-modal {
+  background: rgba(33, 37, 41, 0.8);
+}
+
+/* Distribución de tareas */
+.tasks-distribution {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.task-stat {
+  text-align: center;
+  transition: var(--transition);
+}
+
+.task-stat:hover {
+  transform: translateY(-5px);
+}
+
+.task-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+}
+
+.task-circle:hover {
+  transform: scale(1.1);
+  box-shadow: var(--box-shadow-lg);
+}
+
+.task-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.task-label {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Items de alertas */
+.alert-item {
+  transition: var(--transition);
+  border-left: 4px solid transparent;
+}
+
+.alert-item:hover {
+  background: rgba(13, 110, 253, 0.05);
+  border-left-color: var(--primary-color);
+}
+
+/* Contenedor de progreso */
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.custom-progress {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-progress .progress-bar {
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+/* Tablas - MEJORADO PARA CONTRASTE */
+.table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+  background-color: rgba(13, 110, 253, 0.25) !important;
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--secondary-color);
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem;
+  background-color: rgba(248, 249, 250, 0.8);
+}
+
+[data-bs-theme="dark"] .table th {
+  background-color: rgba(33, 37, 41, 0.8);
+  color: #e9ecef;
+}
+
+.table td {
+  padding: 1rem;
+  vertical-align: middle;
+  position: relative;
+}
+
+/* Mejora específica para texto en hover */
+.table tbody tr:hover td h6,
+.table tbody tr:hover td .fw-semibold,
+.table tbody tr:hover td strong {
+  color: var(--dark-color) !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover td h6,
+[data-bs-theme="dark"] .table tbody tr:hover td .fw-semibold,
+[data-bs-theme="dark"] .table tbody tr:hover td strong {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.table tbody tr:hover td .text-muted {
+  color: rgba(33, 37, 41, 0.7) !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover td .text-muted {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Avatar de usuario */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 110, 253, 0.1);
+}
+
+/* Estadísticas de carrera */
+.career-stat {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  background: rgba(13, 110, 253, 0.05);
+  transition: var(--transition);
+}
+
+.career-stat:hover {
+  background: rgba(13, 110, 253, 0.1);
+}
+
+/* Items de documentos */
+.document-item {
+  transition: var(--transition);
+  border-left: 4px solid transparent;
+}
+
+.document-item:hover {
+  background: rgba(13, 110, 253, 0.05);
+  border-left-color: var(--primary-color);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease;
+  animation-fill-mode: both;
+}
+
+/* Badges personalizados */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+}
+
+.rounded-pill {
+  border-radius: 50rem;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .dashboard-admin {
+    padding: 1rem 0;
+  }
+  
+  .admin-header {
+    padding: 1.5rem;
+  }
+  
+  .admin-filters .row {
+    flex-direction: column;
+  }
+  
+  .admin-filters .col {
+    margin-bottom: 0.5rem;
+  }
+  
+  .tasks-distribution {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .task-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .task-number {
+    font-size: 1.2rem;
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+  
+  .admin-badge {
+    display: block;
+    margin-top: 1rem;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .project-form {
+    padding: 1rem;
+  }
+
+  .project-details-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    top: 15px;
+    right: 15px;
+  }
+  
+  .admin-nav {
+    padding: 0.5rem;
+  }
+  
+  .admin-nav .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+
+  .btn-add-project {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .action-buttons .btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .project-form .row {
+    margin: 0;
+  }
+
+  .project-form .col-md-12,
+  .project-form .col-md-6,
+  .project-form .col-md-12,
+  .project-form .col-md-6,
+  .project-form .col-md-4,
+  .project-form .col-md-3 {
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Mejoras para modo oscuro */
+[data-bs-theme="dark"] .table {
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .table th {
+  border-bottom-color: #495057;
+}
+
+[data-bs-theme="dark"] .table td {
+  border-top-color: #495057;
+}
+
+[data-bs-theme="dark"] .career-stat {
+  background: rgba(108, 117, 125, 0.1);
+}
+
+[data-bs-theme="dark"] .career-stat:hover {
+  background: rgba(108, 117, 125, 0.2);
+}
+
+/* Efectos de hover mejorados */
+.btn {
+  transition: var(--transition);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Mejoras específicas para formulario de proyecto */
+.project-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.project-form .btn-group {
+  gap: 0.5rem;
+}
+
+/* Estilos para tooltips */
+.tooltip {
+  font-size: 0.875rem;
+}
+
+.tooltip-inner {
+  border-radius: var(--border-radius);
+  padding: 0.5rem 0.75rem;
+}
+
+/* Estilos para colapso de detalles */
+.collapse {
+  transition: height 0.35s ease;
+}
+
+.collapsing {
+  transition: height 0.35s ease;
+}
+
+/* Mejoras para el modal con scroll */
+.modal-dialog {
+  max-height: 90vh;
+}
+
+.modal-content {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-lg);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  /* Cambiar color del header - puedes elegir uno de estos: */
+  background: linear-gradient(135deg, #198754, #20c997) !important; /* Verde */
+  /* background: linear-gradient(135deg, #6f42c1, #8951d4) !important; /* Morado */
+  /* background: linear-gradient(135deg, #fd7e14, #ff8c00) !important; /* Naranja */
+  /* background: linear-gradient(135deg, #dc3545, #e63946) !important; /* Rojo */
+  /* background: linear-gradient(135deg, #0dcaf0, #0bb5d1) !important; /* Cian */
+}
+
+.modal-header .modal-title {
+  color: white !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+[data-bs-theme="dark"] .modal-content {
+  background: var(--dark-color);
+}
+
+[data-bs-theme="dark"] .modal-header {
+  border-bottom-color: #495057;
+}
+
+[data-bs-theme="dark"] .modal-footer {
+  border-top-color: #495057;
+}
+
+/* Animaciones adicionales */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.project-form {
+  animation: slideInFromTop 0.4s ease;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--dark-color);
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #495057;
+}
+
+/* Mejoras de accesibilidad */
+.btn:focus,
+.form-select:focus,
+.nav-link:focus,
+.form-control:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Estados de loading */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Estilos para el resumen de tareas */
+.task-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Transiciones suaves para todos los elementos */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #6f42c1, #5a2aa2); /* Purple gradient */
+}
+
+.gradient-teal {
+  background: linear-gradient(135deg, #20c997, #138a63); /* Teal gradient */
+}
+
+/* Estilos específicos para validación de formulario */
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--danger-color);
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: var(--success-color);
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover {
+    transform: none;
+  }
+  
+  .admin-stat-card:hover {
+    transform: none;
+  }
+  
+  .task-stat:hover {
+    transform: none;
+  }
+  
+  .task-circle:hover {
+    transform: none;
+  }
+}
+
+/* Estados de focus mejorados */
+.btn-add-project:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.5);
+}
+
+/* Animación para filas expandibles */
+.project-details-row td {
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Mejoras para imprimir */
+@media print {
+  .theme-toggle,
+  .btn-add-project,
+  .action-buttons {
+    display: none !important;
+  }
+  
+  .dashboard-admin {
+    background: white !important;
+  }
+  
+  .modern-card {
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
+}
+
+/* Estilos adicionales para el formulario */
+.project-form .form-floating {
+  margin-bottom: 1rem;
+}
+
+.project-form .input-group {
+  margin-bottom: 1rem;
+}
+
+.project-form .form-text {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+}
+
+/* Estilos para estados de carga */
+.loading-state {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Mejoras para la accesibilidad del teclado */
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: 3px solid rgba(13, 110, 253, 0.5);
+  outline-offset: 2px;
+}
+
+/* Estilos para mensajes de error y éxito */
+.alert-custom {
+  border-radius: var(--border-radius);
+  border: none;
+  box-shadow: var(--box-shadow);
+}
+
+.alert-custom.alert-success {
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.1), rgba(25, 135, 84, 0.05));
+  color: var(--success-color);
+}
+
+.alert-custom.alert-danger {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+  color: var(--danger-color);
+}
+
+/* Mejoras para la tabla responsiva */
+.table-responsive {
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+/* Estilos para botones secundarios */
+.btn-outline-secondary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+/* Animaciones para elementos nuevos */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.new-project-row {
+  animation: slideInFromRight 0.5s ease;
+}
+
+/* Estilos para campos obligatorios */
+.required-field::after {
+  content: " *";
+  color: var(--danger-color);
+}
+
+/* Mejoras para el modo claro/oscuro del modal */
+[data-bs-theme="dark"] .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Estilos para pestañas activas con mejores indicadores */
+.admin-nav .nav-link.active::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+  border-radius: 2px 2px 0 0;
+}
+
+/* Posición relativa para el indicador */
+.admin-nav .nav-link {
+  position: relative;
+}
+
+/* Mejoras para las transiciones de colapso */
+.collapse.show {
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Estilos para contenido vacío */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--secondary-color);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Mejoras finales para consistencia visual */
+.card-body .btn-group {
+  gap: 0.5rem;
+}
+
+.table .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Estilos adicionales para mejorar la experiencia visual */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Mejoras para la barra de progreso en el modal */
+.progress-container-modal .progress {
+  height: 12px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+[data-bs-theme="dark"] .progress-container-modal .progress {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.progress-container-modal .progress-bar {
+  background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
+
+/* Estilos para botones con estados */
+.btn-loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mejoras para las tarjetas de estadísticas con gradientes */
+.admin-stat-card .card-body {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: rotate(45deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Mejoras para la navegación de pestañas */
+.admin-nav .nav-item {
+  margin-right: 0.25rem;
+}
+
+.admin-nav .nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.admin-nav .nav-link:hover::before {
+  left: 100%;
+}
+
+/* Estilos para elementos con sombras mejoradas */
+.shadow-custom {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-custom-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .shadow-custom {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+[data-bs-theme="dark"] .shadow-custom-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Mejoras para los formularios */
+.form-floating .form-control:focus ~ label,
+.form-floating .form-control:not(:placeholder-shown) ~ label {
+  color: var(--primary-color);
+  transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.form-floating .form-select:focus ~ label,
+.form-floating .form-select:not([value=""]) ~ label {
+  color: var(--primary-color);
+  transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* Estilos para badges con animaciones */
+.badge-animated {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Mejoras para la tabla con efectos hover - CONTRASTE MEJORADO */
+.table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table tbody tr:hover td {
+  background-color: rgba(13, 110, 253, 0.12) !important;
+  color: var(--dark-color) !important;
+  font-weight: 500;
+}
+
+.table tbody tr:hover .badge {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.table tbody tr:hover .progress-container {
+  transform: scale(1.02);
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover td {
+  background-color: rgba(13, 110, 253, 0.25) !important;
+  color: #ffffff !important;
+}
+
+/* Estilos para iconos con rotación */
+.icon-rotate {
+  transition: transform 0.3s ease;
+}
+
+.icon-rotate:hover {
+  transform: rotate(15deg);
+}
+
+/* Mejoras para el contenedor principal */
+.dashboard-admin::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at top, rgba(13, 110, 253, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-bs-theme="dark"] .dashboard-admin::before {
+  background: radial-gradient(ellipse at top, rgba(13, 110, 253, 0.1) 0%, transparent 50%);
+}
+
+/* Estilos para texto con gradiente */
+.text-gradient {
+  background: linear-gradient(45deg, var(--primary-color), var(--info-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Mejoras para botones flotantes */
+.btn-floating {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.btn-floating:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para notificaciones toast personalizadas */
+.toast-custom {
+  border-radius: var(--border-radius);
+  border: none;
+  box-shadow: var(--box-shadow-lg);
+  backdrop-filter: blur(10px);
+}
+
+.toast-custom.toast-success {
+  background: rgba(25, 135, 84, 0.9);
+  color: white;
+}
+
+.toast-custom.toast-error {
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+}
+
+.toast-custom.toast-info {
+  background: rgba(13, 202, 240, 0.9);
+  color: white;
+}
+
+/* Mejoras para elementos interactivos */
+.interactive-element {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.interactive-element:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Estilos para separadores decorativos */
+.divider-custom {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  margin: 2rem 0;
+  border: none;
+}
+
+[data-bs-theme="dark"] .divider-custom {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+/* Mejoras para el diseño de grid */
+.grid-item {
+  transition: all 0.3s ease;
+}
+
+.grid-item:hover {
+  transform: translateY(-5px);
+  z-index: 10;
+}
+
+/* Estilos para overlays */
+.overlay-custom {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: var(--border-radius);
+}
+
+.overlay-custom.show {
+  opacity: 1;
+}
+
+/* Mejoras finales para la consistencia */
+.btn-group-custom .btn {
+  border-radius: 0;
+}
+
+.btn-group-custom .btn:first-child {
+  border-top-left-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius);
+}
+
+.btn-group-custom .btn:last-child {
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+/* Estilos para elementos con loading states */
+.skeleton-loader {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+[data-bs-theme="dark"] .skeleton-loader {
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Últimas mejoras para accesibilidad y UX */
+.focus-ring {
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.focus-ring:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Ajustes finales para print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break {
+    page-break-before: always;
+  }
+  
+  .dashboard-admin {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .modern-card {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+  }
+}
