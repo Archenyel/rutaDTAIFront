@@ -14,6 +14,7 @@ const ListaProyectos = () => {
   // Estados para filtros
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroPrograma, setFiltroPrograma] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState("");
   
   // Estados para formulario
   const [showForm, setShowForm] = useState(false);
@@ -22,11 +23,23 @@ const ListaProyectos = () => {
   const [newProyecto, setNewProyecto] = useState({
     nombre: "",
     descripcion: "",
-    estado: "Pendiente",
+    estado: "",
+    tipo: "",
     fechaInicio: "",
     fechaFin: "",
     programaId: null
   });
+
+  // Tipos de proyecto disponibles
+  const tiposProyecto = [
+    { value: "Social", label: "Social", icon: "bi-people-fill", color: "success" },
+    { value: "I+D", label: "I+D (Investigación + Desarrollo)", icon: "bi-lightbulb-fill", color: "primary" },
+    { value: "Investigacion", label: "Investigación", icon: "bi-search", color: "info" },
+    { value: "Innovacion", label: "Innovación", icon: "bi-gear-fill", color: "warning" },
+    { value: "Tecnologico", label: "Tecnológico", icon: "bi-cpu-fill", color: "dark" },
+    { value: "Educativo", label: "Educativo", icon: "bi-book-fill", color: "purple" },
+    { value: "Empresarial", label: "Empresarial", icon: "bi-building-fill", color: "secondary" }
+  ];
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -52,8 +65,13 @@ const ListaProyectos = () => {
       }
     }
 
+    // Filtro por tipo
+    if (filtroTipo) {
+      filtrados = filtrados.filter(proyecto => proyecto.tipo === filtroTipo);
+    }
+
     setProyectosFiltrados(filtrados);
-  }, [proyectos, filtroEstado, filtroPrograma]);
+  }, [proyectos, filtroEstado, filtroPrograma, filtroTipo]);
 
   // Función para cargar proyectos
   const loadProyectos = async () => {
@@ -80,9 +98,147 @@ const ListaProyectos = () => {
     }
   };
 
+  // Obtener el tipo de proyecto permitido para un programa
+  const getProgramaTipoPermitido = (programaId) => {
+    if (!programaId) return null;
+    
+    const proyectosDelPrograma = proyectos.filter(p => p.programaId === programaId);
+    if (proyectosDelPrograma.length === 0) return null;
+    
+    // Retorna el tipo del primer proyecto del programa
+    return proyectosDelPrograma[0].tipo;
+  };
+
+  // Obtener tipos de proyecto disponibles según el programa seleccionado
+  const getTiposDisponibles = (programaId, isEditing = false, currentProyecto = null) => {
+    // Si no hay programa seleccionado, todos los tipos están disponibles
+    if (!programaId) return tiposProyecto;
+    
+    const tipoPermitido = getProgramaTipoPermitido(programaId);
+    
+    // Si es edición y es el mismo proyecto, permitir el tipo actual
+    if (isEditing && currentProyecto && currentProyecto.programaId === programaId) {
+      return tiposProyecto.filter(tipo => tipo.value === currentProyecto.tipo || !tipoPermitido);
+    }
+    
+    // Si no hay tipo permitido aún, todos están disponibles (primer proyecto)
+    if (!tipoPermitido) return tiposProyecto;
+    
+    // Si ya hay un tipo permitido, solo ese tipo está disponible
+    return tiposProyecto.filter(tipo => tipo.value === tipoPermitido);
+  };
+
+  // Validar si se puede cambiar el tipo de proyecto
+  const puedeChangiarTipo = (programaId, nuevoTipo, proyectoActual = null) => {
+    if (!programaId) return true;
+    
+    const tipoPermitido = getProgramaTipoPermitido(programaId);
+    if (!tipoPermitido) return true;
+    
+    // Si es el mismo proyecto que estableció el tipo, puede mantenerlo
+    if (proyectoActual && proyectoActual.programaId === programaId && proyectoActual.tipo === tipoPermitido) {
+      return nuevoTipo === tipoPermitido;
+    }
+    
+    return nuevoTipo === tipoPermitido;
+  };
+
+  // Manejar cambio de programa en formulario de creación
+  const handleProgramaChange = (programaId, isEditing = false) => {
+    const tiposDisponibles = getTiposDisponibles(programaId, isEditing);
+    
+    if (!isEditing) {
+      // Para crear nuevo proyecto
+      const tipoPermitido = getProgramaTipoPermitido(programaId);
+      const nuevoTipo = tipoPermitido || tiposDisponibles[0]?.value || "";
+      
+      setNewProyecto(prev => ({
+        ...prev,
+        programaId: programaId || null,
+        tipo: nuevoTipo
+      }));
+
+      // Mostrar alerta si el programa tiene restricción de tipo
+      if (tipoPermitido && programaId) {
+        const programa = programas.find(p => p.id === programaId);
+        const tipoInfo = getTipoInfo(tipoPermitido);
+        const proyectosCount = proyectos.filter(p => p.programaId === programaId).length;
+        
+        setError(null);
+        setSuccess(`ℹ️ IMPORTANTE: El programa "${programa?.nombre}" está configurado para proyectos de tipo "${tipoInfo.label}". Actualmente tiene ${proyectosCount} proyecto(s) de este tipo. Se mantendrá la consistencia del programa.`);
+        setTimeout(() => setSuccess(null), 8000);
+      }
+    }
+  };
+
+  // Manejar cambio de programa en edición
+  const handleEditProgramaChange = (programaId) => {
+    const tiposDisponibles = getTiposDisponibles(programaId, true, editProyecto);
+    const tipoPermitido = getProgramaTipoPermitido(programaId);
+    
+    let nuevoTipo = editProyecto.tipo;
+    
+    // Si el tipo actual no está permitido en el nuevo programa, cambiar al permitido
+    if (programaId && tipoPermitido && editProyecto.tipo !== tipoPermitido) {
+      nuevoTipo = tipoPermitido;
+      
+      // Mostrar alerta de cambio automático
+      const programa = programas.find(p => p.id === programaId);
+      const tipoInfo = getTipoInfo(tipoPermitido);
+      const proyectosCount = proyectos.filter(p => p.programaId === programaId).length;
+      
+      setError(null);
+      setSuccess(`⚠️ CAMBIO AUTOMÁTICO: El programa "${programa?.nombre}" solo acepta proyectos de tipo "${tipoInfo.label}". El tipo se ha cambiado automáticamente para mantener la consistencia. El programa tiene ${proyectosCount} proyecto(s) relacionado(s).`);
+      setTimeout(() => setSuccess(null), 10000);
+    } else if (!programaId) {
+      // Si se quita el programa, mantener el tipo actual
+      nuevoTipo = editProyecto.tipo;
+    }
+    
+    setEditProyecto(prev => ({
+      ...prev,
+      programaId: programaId || null,
+      tipo: nuevoTipo
+    }));
+  };
+
+  // Obtener información del tipo de proyecto
+  const getTipoInfo = (tipo) => {
+    return tiposProyecto.find(t => t.value === tipo) || tiposProyecto[0];
+  };
+
+  // Limpiar filtros
+  const handleClearFilters = () => {
+    setFiltroEstado("");
+    setFiltroPrograma("");
+    setFiltroTipo("");
+  };
+
+  // Obtener badge de estado
+  const getEstadoBadge = (estado) => {
+    const badges = {
+      'Pendiente': 'secondary',
+      'En Progreso': 'primary',
+      'Completado': 'success',
+      'Pausado': 'warning',
+      'Cancelado': 'danger'
+    };
+    return badges[estado] || 'secondary';
+  };
+
   // Crear nuevo proyecto
   const handleCreateProyecto = async (e) => {
     e.preventDefault();
+    
+    // Validar restricción de tipo por programa
+    if (newProyecto.programaId && !puedeChangiarTipo(newProyecto.programaId, newProyecto.tipo)) {
+      const tipoPermitido = getProgramaTipoPermitido(newProyecto.programaId);
+      const tipoInfo = getTipoInfo(tipoPermitido);
+      const programa = programas.find(p => p.id === newProyecto.programaId);
+      setError(`❌ RESTRICCIÓN DE PROGRAMA: "${programa?.nombre}" solo acepta proyectos de tipo "${tipoInfo.label}". Por favor, reconsidere para mantener los proyectos relacionados o seleccione otro programa.`);
+      return;
+    }
+    
     try {
       setLoading(true);
       setError(null);
@@ -91,6 +247,7 @@ const ListaProyectos = () => {
         nombre: newProyecto.nombre,
         descripcion: newProyecto.descripcion,
         estado: newProyecto.estado,
+        tipo: newProyecto.tipo,
         fechaInicio: newProyecto.fechaInicio,
         fechaFin: newProyecto.fechaFin,
         programaId: newProyecto.programaId
@@ -102,7 +259,8 @@ const ListaProyectos = () => {
       setNewProyecto({
         nombre: "",
         descripcion: "",
-        estado: "Pendiente",
+        estado: "",
+        tipo: "",
         fechaInicio: "",
         fechaFin: "",
         programaId: null
@@ -129,6 +287,16 @@ const ListaProyectos = () => {
   // Guardar cambios en proyecto
   const handleSaveEdit = async (e) => {
     e.preventDefault();
+    
+    // Validar restricción de tipo por programa
+    if (editProyecto.programaId && !puedeChangiarTipo(editProyecto.programaId, editProyecto.tipo, editProyecto)) {
+      const tipoPermitido = getProgramaTipoPermitido(editProyecto.programaId);
+      const tipoInfo = getTipoInfo(tipoPermitido);
+      const programa = programas.find(p => p.id === editProyecto.programaId);
+      setError(`❌ RESTRICCIÓN DE PROGRAMA: "${programa?.nombre}" solo acepta proyectos de tipo "${tipoInfo.label}". Por favor, reconsidere para mantener los proyectos relacionados o cambie de programa.`);
+      return;
+    }
+    
     try {
       setLoading(true);
       setError(null);
@@ -137,6 +305,7 @@ const ListaProyectos = () => {
         nombre: editProyecto.nombre,
         descripcion: editProyecto.descripcion,
         estado: editProyecto.estado,
+        tipo: editProyecto.tipo,
         fechaInicio: editProyecto.fechaInicio,
         fechaFin: editProyecto.fechaFin,
         programaId: editProyecto.programaId
@@ -194,24 +363,6 @@ const ListaProyectos = () => {
     return programa ? programa.nombre : 'Programa no encontrado';
   };
 
-  // Limpiar filtros
-  const handleClearFilters = () => {
-    setFiltroEstado("");
-    setFiltroPrograma("");
-  };
-
-  // Obtener badge de estado
-  const getEstadoBadge = (estado) => {
-    const badges = {
-      'Pendiente': 'secondary',
-      'En Progreso': 'primary',
-      'Completado': 'success',
-      'Pausado': 'warning',
-      'Cancelado': 'danger'
-    };
-    return badges[estado] || 'secondary';
-  };
-
   return (
     <Container fluid className="proyectos-container py-4">
       {/* Header */}
@@ -244,7 +395,7 @@ const ListaProyectos = () => {
           <Card className="shadow-sm border-0">
             <Card.Body className="py-3">
               <Row className="align-items-center">
-                <Col lg={4}>
+                <Col lg={3}>
                   <div className="mb-3 mb-lg-0">
                     <label className="form-label mb-1 fw-semibold small">
                       <i className="bi bi-flag me-1"></i>
@@ -264,7 +415,27 @@ const ListaProyectos = () => {
                     </select>
                   </div>
                 </Col>
-                <Col lg={5}>
+                <Col lg={3}>
+                  <div className="mb-3 mb-lg-0">
+                    <label className="form-label mb-1 fw-semibold small">
+                      <i className="bi bi-tag me-1"></i>
+                      Tipo de Proyecto
+                    </label>
+                    <select
+                      className="form-select form-select-sm"
+                      value={filtroTipo}
+                      onChange={(e) => setFiltroTipo(e.target.value)}
+                    >
+                      <option value="">Todos los tipos</option>
+                      {tiposProyecto.map(tipo => (
+                        <option key={tipo.value} value={tipo.value}>
+                          {tipo.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </Col>
+                <Col lg={3}>
                   <div className="mb-3 mb-lg-0">
                     <label className="form-label mb-1 fw-semibold small">
                       <i className="bi bi-briefcase me-1"></i>
@@ -287,7 +458,7 @@ const ListaProyectos = () => {
                 </Col>
                 <Col lg={3}>
                   <div className="d-flex gap-2 justify-content-end">
-                    {(filtroEstado || filtroPrograma) && (
+                    {(filtroEstado || filtroPrograma || filtroTipo) && (
                       <Button 
                         variant="outline-secondary"
                         size="sm"
@@ -365,6 +536,39 @@ const ListaProyectos = () => {
                     <Col md={3}>
                       <Form.Group className="mb-3">
                         <Form.Label className="fw-semibold">
+                          <i className="bi bi-tag me-1"></i>
+                          Tipo de Proyecto *
+                          {newProyecto.programaId && getProgramaTipoPermitido(newProyecto.programaId) && (
+                            <small className="text-warning d-block fw-bold">
+                              <i className="bi bi-exclamation-triangle me-1"></i>
+                              Restringido por programa
+                            </small>
+                          )}
+                        </Form.Label>
+                        <Form.Select
+                          value={newProyecto.tipo}
+                          onChange={(e) => setNewProyecto({ ...newProyecto, tipo: e.target.value })}
+                          disabled={loading}
+                          required
+                        >
+                          <option value="">Seleccione un tipo</option>
+                          {getTiposDisponibles(newProyecto.programaId).map(tipo => (
+                            <option key={tipo.value} value={tipo.value}>
+                              {tipo.label}
+                            </option>
+                          ))}
+                        </Form.Select>
+                        {newProyecto.programaId && getProgramaTipoPermitido(newProyecto.programaId) && (
+                          <Form.Text className="text-warning fw-bold">
+                            <i className="bi bi-shield-exclamation me-1"></i>
+                            Este programa solo acepta proyectos de tipo: "{getTipoInfo(getProgramaTipoPermitido(newProyecto.programaId)).label}"
+                          </Form.Text>
+                        )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={3}>
+                      <Form.Group className="mb-3">
+                        <Form.Label className="fw-semibold">
                           <i className="bi bi-flag me-1"></i>
                           Estado
                         </Form.Label>
@@ -373,6 +577,7 @@ const ListaProyectos = () => {
                           onChange={(e) => setNewProyecto({ ...newProyecto, estado: e.target.value })}
                           disabled={loading}
                         >
+                          <option value="">Seleccione estado</option>
                           <option value="Pendiente">Pendiente</option>
                           <option value="En Progreso">En Progreso</option>
                           <option value="Completado">Completado</option>
@@ -419,16 +624,27 @@ const ListaProyectos = () => {
                         </Form.Label>
                         <Form.Select
                           value={newProyecto.programaId || ""}
-                          onChange={(e) => setNewProyecto({ ...newProyecto, programaId: e.target.value || null })}
+                          onChange={(e) => handleProgramaChange(e.target.value)}
                           disabled={loading}
                         >
                           <option value="">Proyecto independiente</option>
-                          {programas.map(programa => (
-                            <option key={programa.id} value={programa.id}>
-                              {programa.nombre}
-                            </option>
-                          ))}
+                          {programas.map(programa => {
+                            const tipoPermitido = getProgramaTipoPermitido(programa.id);
+                            const proyectosCount = proyectos.filter(p => p.programaId === programa.id).length;
+                            return (
+                              <option key={programa.id} value={programa.id}>
+                                {programa.nombre}
+                                {tipoPermitido && ` (${getTipoInfo(tipoPermitido).label} - ${proyectosCount} proyectos)`}
+                              </option>
+                            );
+                          })}
                         </Form.Select>
+                        {newProyecto.programaId && getProgramaTipoPermitido(newProyecto.programaId) && (
+                          <Form.Text className="text-info">
+                            <i className="bi bi-info-circle me-1"></i>
+                            Programa con {proyectos.filter(p => p.programaId === newProyecto.programaId).length} proyecto(s) relacionado(s)
+                          </Form.Text>
+                        )}
                       </Form.Group>
                     </Col>
                   </Row>
@@ -508,7 +724,7 @@ const ListaProyectos = () => {
                   <i className="bi bi-folder-x display-1 text-muted"></i>
                   <h5 className="mt-3 text-muted">No hay proyectos</h5>
                   <p className="text-muted">
-                    {(filtroEstado || filtroPrograma) 
+                    {(filtroEstado || filtroPrograma || filtroTipo) 
                       ? 'No se encontraron proyectos con los filtros aplicados'
                       : 'Comience creando su primer proyecto'
                     }
@@ -516,76 +732,83 @@ const ListaProyectos = () => {
                 </div>
               ) : (
                 <div className="list-group list-group-flush">
-                  {proyectosFiltrados.map((proyecto) => (
-                    <div key={proyecto.id} className="list-group-item">
-                      <Row className="align-items-center">
-                        <Col md={7}>
-                          <div className="d-flex align-items-start">
-                            <div className="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-                              <i className="bi bi-folder text-success fs-5"></i>
-                            </div>
-                            <div>
-                              <h6 className="mb-1 fw-bold">{proyecto.nombre}</h6>
-                              <p className="mb-1 text-muted small">
-                                {proyecto.descripcion || "Sin descripción"}
-                              </p>
-                              <div className="d-flex gap-2 flex-wrap">
-                                <Badge bg={getEstadoBadge(proyecto.estado)}>
-                                  <i className="bi bi-flag me-1"></i>
-                                  {proyecto.estado}
-                                </Badge>
-                                <Badge bg={proyecto.programaId ? "primary" : "secondary"}>
-                                  <i className="bi bi-briefcase me-1"></i>
-                                  {getProgramaNombre(proyecto.programaId)}
-                                </Badge>
-                                {proyecto.fechaInicio && (
-                                  <small className="text-muted">
-                                    <i className="bi bi-calendar me-1"></i>
-                                    {new Date(proyecto.fechaInicio).toLocaleDateString('es-ES')}
-                                  </small>
-                                )}
+                  {proyectosFiltrados.map((proyecto) => {
+                    const tipoInfo = getTipoInfo(proyecto.tipo);
+                    return (
+                      <div key={proyecto.id} className="list-group-item">
+                        <Row className="align-items-center">
+                          <Col md={7}>
+                            <div className="d-flex align-items-start">
+                              <div className="bg-success bg-opacity-10 rounded-circle p-3 me-3">
+                                <i className="bi bi-folder text-success fs-5"></i>
+                              </div>
+                              <div>
+                                <h6 className="mb-1 fw-bold">{proyecto.nombre}</h6>
+                                <p className="mb-1 text-muted small">
+                                  {proyecto.descripcion || "Sin descripción"}
+                                </p>
+                                <div className="d-flex gap-2 flex-wrap">
+                                  <Badge bg={getEstadoBadge(proyecto.estado)}>
+                                    <i className="bi bi-flag me-1"></i>
+                                    {proyecto.estado}
+                                  </Badge>
+                                  <Badge bg={tipoInfo.color}>
+                                    <i className={`${tipoInfo.icon} me-1`}></i>
+                                    {tipoInfo.label}
+                                  </Badge>
+                                  <Badge bg={proyecto.programaId ? "primary" : "secondary"}>
+                                    <i className="bi bi-briefcase me-1"></i>
+                                    {getProgramaNombre(proyecto.programaId)}
+                                  </Badge>
+                                  {proyecto.fechaInicio && (
+                                    <small className="text-muted">
+                                      <i className="bi bi-calendar me-1"></i>
+                                      {new Date(proyecto.fechaInicio).toLocaleDateString('es-ES')}
+                                    </small>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </Col>
-                        <Col md={5} className="text-end">
-                          <div className="d-flex gap-2 justify-content-end">
-                            <Button 
-                              as={Link}
-                              to={`/adminKanban/${proyecto.id}`}
-                              variant="outline-success" 
-                              size="sm"
-                              title="Ver proyecto"
-                            >
-                              <i className="bi bi-eye me-1"></i>
-                              Ver
-                            </Button>
-                            
-                            <div className="btn-group">
+                          </Col>
+                          <Col md={5} className="text-end">
+                            <div className="d-flex gap-2 justify-content-end">
                               <Button 
-                                variant="outline-warning" 
-                                size="sm" 
-                                onClick={() => handleEditProyecto(proyecto)}
-                                disabled={loading}
-                                title="Editar proyecto"
+                                as={Link}
+                                to={`/adminKanban/${proyecto.id}`}
+                                variant="outline-success" 
+                                size="sm"
+                                title="Ver proyecto"
                               >
-                                <i className="bi bi-pencil"></i>
+                                <i className="bi bi-eye me-1"></i>
+                                Ver
                               </Button>
-                              <Button 
-                                variant="outline-danger" 
-                                size="sm" 
-                                onClick={() => handleDeleteProyecto(proyecto)}
-                                disabled={loading}
-                                title="Eliminar proyecto"
-                              >
-                                <i className="bi bi-trash"></i>
-                              </Button>
+                              
+                              <div className="btn-group">
+                                <Button 
+                                  variant="outline-warning" 
+                                  size="sm" 
+                                  onClick={() => handleEditProyecto(proyecto)}
+                                  disabled={loading}
+                                  title="Editar proyecto"
+                                >
+                                  <i className="bi bi-pencil"></i>
+                                </Button>
+                                <Button 
+                                  variant="outline-danger" 
+                                  size="sm" 
+                                  onClick={() => handleDeleteProyecto(proyecto)}
+                                  disabled={loading}
+                                  title="Eliminar proyecto"
+                                >
+                                  <i className="bi bi-trash"></i>
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                        </Col>
-                      </Row>
-                    </div>
-                  ))}
+                          </Col>
+                        </Row>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </Card.Body>
@@ -622,6 +845,36 @@ const ListaProyectos = () => {
                     required
                     disabled={loading}
                   />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-semibold">
+                    Tipo de Proyecto
+                    {editProyecto?.programaId && getProgramaTipoPermitido(editProyecto.programaId) && (
+                      <small className="text-warning d-block fw-bold">
+                        <i className="bi bi-exclamation-triangle me-1"></i>
+                        Restringido por programa
+                      </small>
+                    )}
+                  </Form.Label>
+                  <Form.Select
+                    value={editProyecto?.tipo || ""}
+                    onChange={(e) => setEditProyecto({ ...editProyecto, tipo: e.target.value })}
+                    disabled={loading}
+                  >
+                    {getTiposDisponibles(editProyecto?.programaId, true, editProyecto).map(tipo => (
+                      <option key={tipo.value} value={tipo.value}>
+                        {tipo.label}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {editProyecto?.programaId && getProgramaTipoPermitido(editProyecto.programaId) && (
+                    <Form.Text className="text-warning fw-bold">
+                      <i className="bi bi-shield-exclamation me-1"></i>
+                      Este programa solo acepta proyectos de tipo: "{getTipoInfo(getProgramaTipoPermitido(editProyecto.programaId)).label}"
+                    </Form.Text>
+                  )}
                 </Form.Group>
               </Col>
               <Col md={3}>
@@ -669,16 +922,27 @@ const ListaProyectos = () => {
                   <Form.Label className="fw-semibold">Programa</Form.Label>
                   <Form.Select
                     value={editProyecto?.programaId || ""}
-                    onChange={(e) => setEditProyecto({ ...editProyecto, programaId: e.target.value || null })}
+                    onChange={(e) => handleEditProgramaChange(e.target.value)}
                     disabled={loading}
                   >
                     <option value="">Proyecto independiente</option>
-                    {programas.map(programa => (
-                      <option key={programa.id} value={programa.id}>
-                        {programa.nombre}
-                      </option>
-                    ))}
+                    {programas.map(programa => {
+                      const tipoPermitido = getProgramaTipoPermitido(programa.id);
+                      const proyectosCount = proyectos.filter(p => p.programaId === programa.id).length;
+                      return (
+                        <option key={programa.id} value={programa.id}>
+                          {programa.nombre}
+                          {tipoPermitido && ` (${getTipoInfo(tipoPermitido).label} - ${proyectosCount} proyectos)`}
+                        </option>
+                      );
+                    })}
                   </Form.Select>
+                  {editProyecto?.programaId && getProgramaTipoPermitido(editProyecto.programaId) && (
+                    <Form.Text className="text-info">
+                      <i className="bi bi-info-circle me-1"></i>
+                      Programa con {proyectos.filter(p => p.programaId === editProyecto.programaId).length} proyecto(s) relacionado(s)
+                    </Form.Text>
+                  )}
                 </Form.Group>
               </Col>
             </Row>

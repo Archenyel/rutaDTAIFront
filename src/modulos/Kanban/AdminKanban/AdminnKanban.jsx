@@ -96,7 +96,7 @@ const AdminKanban = () => {
       setLoading(prev => ({...prev, acciones: true}));
       setError(null);
 
-      const response = await api.post('/tareas', newTask);
+      const response = await api.post('/tareas/nuevaTarea', newTask);
       
       setTareas([...tareas, response.data]);
       setNewTask({

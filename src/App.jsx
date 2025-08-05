@@ -18,6 +18,7 @@ import Proyecto from "./modulos/proyectos/Proyecto";
 import GestionProyectos from "./modulos/dashboard/gestionProyectos/GestionProyectos";
 import ListaProyectos from "./componentes/listaProyectos";
 import Perfil from "./modulos/perfil/perfil";
+import GestionUsuarios from "./componentes/GestionUsuarios";
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
         <Route path="/gestionProyectos" element={<Layout><GestionProyectos /></Layout>} />
         <Route path="/listaProyectos" element={<Layout><ListaProyectos /></Layout>} />
         <Route path="/perfil" element={<Layout><Perfil /></Layout>} />
-
+        <Route path="/gestionUsuarios" element={<Layout><GestionUsuarios /></Layout>} />
       </Routes>
     </Router>
   );
