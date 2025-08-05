@@ -145,7 +145,7 @@ const DashboardSuperadmin = ({ user }) => {
                   <Col md={6} lg={3}>
                     <Card
                       as={Link}
-                      to="/usuarios-administradores"
+                      to="/gestionUsuarios"
                       className="text-center border-0 shadow-sm h-100 navigation-card gradient-warning"
                       style={{ cursor: "pointer", textDecoration: "none" }}
                     >
