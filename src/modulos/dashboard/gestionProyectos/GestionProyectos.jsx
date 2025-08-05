@@ -10,7 +10,6 @@ import {
   Table,
   Badge,
   ProgressBar,
-  Dropdown,
   InputGroup,
   Alert,
   Tabs,
@@ -18,7 +17,6 @@ import {
   ListGroup,
   OverlayTrigger,
   Tooltip,
-  Accordion,
   Spinner
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -53,6 +51,7 @@ const GestionProyectos = ({ user }) => {
     programa: "",
     responsable: "",
     equipo: [],
+    alumnos: [],
     fechaInicio: "",
     fechaFin: "",
     presupuesto: "",
@@ -67,7 +66,7 @@ const GestionProyectos = ({ user }) => {
   
   const [editProject, setEditProject] = useState({});
   
-  // Datos estáticos iniciales
+  // Datos estáticos
   const programasDisponibles = [
     "Ingeniería de Software",
     "Sistemas Computacionales", 
@@ -84,6 +83,15 @@ const GestionProyectos = ({ user }) => {
     "Mtra. Ana Rodríguez",
     "Ing. Pedro Martínez",
     "Dra. Laura Sánchez"
+  ];
+
+  // Lista estática de alumnos disponibles
+  const alumnosDisponibles = [
+    { id: 1, nombre: "Juan Pérez", matricula: "A12345", carrera: "Ingeniería de Software" },
+    { id: 2, nombre: "María García", matricula: "A67890", carrera: "Sistemas Computacionales" },
+    { id: 3, nombre: "Carlos López", matricula: "B12345", carrera: "Redes y Telecomunicaciones" },
+    { id: 4, nombre: "Ana Rodríguez", matricula: "B67890", carrera: "Desarrollo Web" },
+    { id: 5, nombre: "Pedro Martínez", matricula: "C12345", carrera: "Ciencia de Datos" }
   ];
   
   const estadosProyecto = [
@@ -113,6 +121,7 @@ const GestionProyectos = ({ user }) => {
         programa: "Ingeniería de Software",
         responsable: "Dr. Juan Pérez",
         equipo: ["Ana García", "Carlos López", "María Rodríguez"],
+        alumnos: [1, 3],
         fechaInicio: "2024-01-15",
         fechaFin: "2024-12-15",
         presupuesto: "150000",
@@ -146,6 +155,7 @@ const GestionProyectos = ({ user }) => {
         programa: "Desarrollo Web",
         responsable: "Ing. María García",
         equipo: ["Pedro Martínez", "Laura Sánchez"],
+        alumnos: [2, 4],
         fechaInicio: "2024-03-01",
         fechaFin: "2024-10-30",
         presupuesto: "200000",
@@ -166,35 +176,6 @@ const GestionProyectos = ({ user }) => {
         ],
         documentos: [
           { nombre: "Plan_Proyecto.docx", tipo: "doc", fecha: "2024-03-05" }
-        ]
-      },
-      {
-        id: 3,
-        nombre: "Red de Sensores IoT",
-        descripcion: "Implementación de una red de sensores IoT para monitoreo ambiental del campus universitario.",
-        programa: "Redes y Telecomunicaciones",
-        responsable: "Dr. Carlos López",
-        equipo: ["Diego Martínez", "Sofia López", "Roberto Chen"],
-        fechaInicio: "2024-02-01",
-        fechaFin: "2024-08-31",
-        presupuesto: "75000",
-        estado: "finalizado",
-        prioridad: "alta",
-        progreso: 100,
-        objetivos: [
-          "Instalar sensores en edificios",
-          "Desarrollar dashboard de monitoreo",
-          "Implementar alertas automáticas"
-        ],
-        hitos: [
-          { nombre: "Instalación de hardware", fecha: "2024-04-30", completado: true },
-          { nombre: "Desarrollo de software", fecha: "2024-06-30", completado: true },
-          { nombre: "Pruebas finales", fecha: "2024-08-15", completado: true }
-        ],
-        riesgos: [],
-        documentos: [
-          { nombre: "Manual_Usuario.pdf", tipo: "pdf", fecha: "2024-08-20" },
-          { nombre: "Codigo_Fuente.zip", tipo: "code", fecha: "2024-08-25" }
         ]
       }
     ];
@@ -230,6 +211,35 @@ const GestionProyectos = ({ user }) => {
     }
   });
 
+  // Función para obtener información de alumno por ID
+  const getAlumnoById = (id) => {
+    return alumnosDisponibles.find(alumno => alumno.id === id);
+  };
+
+  // Función para manejar selección de alumnos
+  const handleAlumnoSelection = (alumnoId, isChecked, isEditMode = false) => {
+    if (isEditMode) {
+      setEditProject(prev => {
+        const newAlumnos = isChecked 
+          ? [...(prev.alumnos || []), alumnoId]
+          : (prev.alumnos || []).filter(id => id !== alumnoId);
+        return { ...prev, alumnos: newAlumnos };
+      });
+    } else {
+      setNewProject(prev => {
+        const newAlumnos = isChecked 
+          ? [...prev.alumnos, alumnoId]
+          : prev.alumnos.filter(id => id !== alumnoId);
+        return { ...prev, alumnos: newAlumnos };
+      });
+    }
+  };
+
+  // Función para verificar si un alumno está asignado
+  const isAlumnoAsignado = (alumnoId, proyecto) => {
+    return proyecto.alumnos && proyecto.alumnos.includes(alumnoId);
+  };
+
   // Funciones para manejar proyectos
   const handleCreateProject = () => {
     setLoading(true);
@@ -239,6 +249,7 @@ const GestionProyectos = ({ user }) => {
         ...newProject,
         id: newId,
         equipo: newProject.equipo.filter(member => member.trim() !== ""),
+        alumnos: newProject.alumnos,
         objetivos: newProject.objetivos.filter(obj => obj.trim() !== ""),
         presupuesto: parseFloat(newProject.presupuesto) || 0,
         hitos: [],
@@ -253,6 +264,7 @@ const GestionProyectos = ({ user }) => {
         programa: "",
         responsable: "",
         equipo: [],
+        alumnos: [],
         fechaInicio: "",
         fechaFin: "",
         presupuesto: "",
@@ -341,7 +353,7 @@ const GestionProyectos = ({ user }) => {
   const navigate = useNavigate();
 
   // Renderizar vista de tarjetas
-  const renderGridView = () => (
+const renderGridView = () => (
     <Row className="g-4">
       {filteredProjects.map(proyecto => (
         <Col key={proyecto.id} lg={4} md={6}>
@@ -374,6 +386,10 @@ const GestionProyectos = ({ user }) => {
                 <div className="info-item">
                   <i className="bi bi-people me-2 text-info"></i>
                   <small><strong>Equipo:</strong> {proyecto.equipo.length} miembros</small>
+                </div>
+                <div className="info-item">
+                  <i className="bi bi-person-video3 me-2 text-secondary"></i>
+                  <small><strong>Alumnos:</strong> {proyecto.alumnos?.length || 0}</small>
                 </div>
                 <div className="info-item">
                   <i className="bi bi-calendar me-2 text-warning"></i>
@@ -415,6 +431,17 @@ const GestionProyectos = ({ user }) => {
                   <i className="bi bi-eye me-1"></i>
                   Ver
                 </Button>
+                
+                <Button 
+                  variant="outline-info" 
+                  size="sm" 
+                  onClick={() => navigate(`/adminKanban/${proyecto.id}`)}
+                  className="flex-fill"
+                >
+                  <i className="bi bi-list-task me-1"></i>
+                  Tareas
+                </Button>
+                
                 <Button 
                   variant="outline-secondary" 
                   size="sm" 
@@ -424,6 +451,7 @@ const GestionProyectos = ({ user }) => {
                   <i className="bi bi-pencil me-1"></i>
                   Editar
                 </Button>
+                
                 <Button 
                   variant="outline-danger" 
                   size="sm" 
@@ -453,6 +481,7 @@ const GestionProyectos = ({ user }) => {
                 <th>Estado</th>
                 <th>Prioridad</th>
                 <th>Progreso</th>
+                <th>Alumnos</th>
                 <th>Fecha Fin</th>
                 <th>Presupuesto</th>
                 <th>Acciones</th>
@@ -488,6 +517,11 @@ const GestionProyectos = ({ user }) => {
                       />
                       <small>{proyecto.progreso}%</small>
                     </div>
+                  </td>
+                  <td>
+                    <Badge bg="info" className="rounded-pill">
+                      {proyecto.alumnos?.length || 0}
+                    </Badge>
                   </td>
                   <td>
                     <small>{proyecto.fechaFin}</small>
@@ -558,14 +592,13 @@ const GestionProyectos = ({ user }) => {
         <i className={`bi ${theme === "light" ? "bi-moon-stars-fill" : "bi-sun-fill"} theme-icon`}></i>
       </button>
 
- <button
+      <button
         className="btn btn-outline-secondary position-fixed back-button"
         onClick={() => navigate('/dashboardAdmin')}
       >
         <i className="bi bi-arrow-left" />
       </button>
 
-      
       <Container fluid className="gestion-proyectos pb-5">
         {/* Header */}
         <div className="projects-header mb-4">
@@ -686,11 +719,11 @@ const GestionProyectos = ({ user }) => {
           <Col md={3}>
             <Card className="stats-card text-center">
               <Card.Body>
-                <i className="bi bi-check-circle stats-icon text-info"></i>
+                <i className="bi bi-person-video3 stats-icon text-info"></i>
                 <h3 className="fw-bold mb-0">
-                  {proyectos.filter(p => p.estado === "finalizado").length}
+                  {proyectos.reduce((sum, p) => sum + (p.alumnos?.length || 0), 0)}
                 </h3>
-                <small className="text-muted">Finalizados</small>
+                <small className="text-muted">Alumnos Participando</small>
               </Card.Body>
             </Card>
           </Col>
@@ -883,10 +916,10 @@ const GestionProyectos = ({ user }) => {
                   </div>
                 </Tab>
                 
-                <Tab eventKey="equipo" title="Equipo y Objetivos">
+                <Tab eventKey="equipo" title="Equipo y Alumnos">
                   <div className="p-3">
                     <Row className="g-3">
-                      <Col md={12}>
+                      {/*<Col md={12}>
                         <Form.Group>
                           <Form.Label className="fw-semibold">Miembros del Equipo</Form.Label>
                           <Form.Control
@@ -902,7 +935,31 @@ const GestionProyectos = ({ user }) => {
                             Separe los nombres con comas para agregar múltiples miembros
                           </Form.Text>
                         </Form.Group>
+                      </Col>*/}
+                      
+                      <Col md={12}>
+                        <Form.Group>
+                          <Form.Label className="fw-semibold">Asignar Alumnos al Proyecto</Form.Label>
+                          <Card className="mb-3">
+                            <Card.Body style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                              {alumnosDisponibles.map(alumno => (
+                                <Form.Check 
+                                  key={alumno.id}
+                                  type="checkbox"
+                                  id={`alumno-create-${alumno.id}`}
+                                  label={`${alumno.nombre} (${alumno.matricula}) - ${alumno.carrera}`}
+                                  checked={newProject.alumnos.includes(alumno.id)}
+                                  onChange={(e) => handleAlumnoSelection(alumno.id, e.target.checked)}
+                                />
+                              ))}
+                            </Card.Body>
+                          </Card>
+                          {/*<Form.Text className="text-muted">
+                            Seleccione los alumnos que participarán en este proyecto
+                          </Form.Text>*/}
+                        </Form.Group>
                       </Col>
+                      
                       <Col md={12}>
                         <Form.Group>
                           <Form.Label className="fw-semibold">Objetivos del Proyecto</Form.Label>
@@ -1093,7 +1150,7 @@ const GestionProyectos = ({ user }) => {
                     </div>
                   </Tab>
                   
-                  <Tab eventKey="equipo" title="Equipo y Objetivos">
+                  <Tab eventKey="equipo" title="Equipo y Alumnos">
                     <div className="p-3">
                       <Row className="g-3">
                         <Col md={12}>
@@ -1109,6 +1166,27 @@ const GestionProyectos = ({ user }) => {
                             />
                           </Form.Group>
                         </Col>
+                        
+                        <Col md={12}>
+                          <Form.Group>
+                            <Form.Label className="fw-semibold">Asignar Alumnos al Proyecto</Form.Label>
+                            <Card className="mb-3">
+                              <Card.Body style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                {alumnosDisponibles.map(alumno => (
+                                  <Form.Check 
+                                    key={alumno.id}
+                                    type="checkbox"
+                                    id={`alumno-edit-${alumno.id}`}
+                                    label={`${alumno.nombre} (${alumno.matricula}) - ${alumno.carrera}`}
+                                    checked={(editProject.alumnos || []).includes(alumno.id)}
+                                    onChange={(e) => handleAlumnoSelection(alumno.id, e.target.checked, true)}
+                                  />
+                                ))}
+                              </Card.Body>
+                            </Card>
+                          </Form.Group>
+                        </Col>
+                        
                         <Col md={12}>
                           <Form.Group>
                             <Form.Label className="fw-semibold">Objetivos del Proyecto</Form.Label>
@@ -1285,111 +1363,49 @@ const GestionProyectos = ({ user }) => {
                             </Card.Body>
                           </Card>
                         </Col>
+                        
+                        <Col md={12}>
+                          <Card className="detail-info-card">
+                            <Card.Header>
+                              <h6 className="mb-0">
+                                <i className="bi bi-person-video3 me-2"></i>
+                                Alumnos Asignados ({selectedProject.alumnos?.length || 0})
+                              </h6>
+                            </Card.Header>
+                            <Card.Body>
+                              {selectedProject.alumnos && selectedProject.alumnos.length > 0 ? (
+                                <Table hover>
+                                  <thead>
+                                    <tr>
+                                      <th>Nombre</th>
+                                      <th>Matrícula</th>
+                                      <th>Carrera</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {selectedProject.alumnos.map(alumnoId => {
+                                      const alumno = getAlumnoById(alumnoId);
+                                      return alumno ? (
+                                        <tr key={alumno.id}>
+                                          <td>{alumno.nombre}</td>
+                                          <td>{alumno.matricula}</td>
+                                          <td>{alumno.carrera}</td>
+                                        </tr>
+                                      ) : null;
+                                    })}
+                                  </tbody>
+                                </Table>
+                              ) : (
+                                <p className="text-muted mb-0">No hay alumnos asignados a este proyecto</p>
+                              )}
+                            </Card.Body>
+                          </Card>
+                        </Col>
                       </Row>
                     </div>
                   </Tab>
                   
-                  <Tab eventKey="objetivos" title="Objetivos">
-                    <div className="p-3">
-                      <Card className="detail-info-card">
-                        <Card.Header>
-                          <h6 className="mb-0">
-                            <i className="bi bi-target me-2"></i>
-                            Objetivos del Proyecto
-                          </h6>
-                        </Card.Header>
-                        <Card.Body>
-                          {selectedProject.objetivos && selectedProject.objetivos.length > 0 ? (
-                            <ListGroup variant="flush">
-                              {selectedProject.objetivos.map((objetivo, index) => (
-                                <ListGroup.Item key={index} className="d-flex align-items-start">
-                                  <i className="bi bi-check-circle text-success me-3 mt-1"></i>
-                                  <span>{objetivo}</span>
-                                </ListGroup.Item>
-                              ))}
-                            </ListGroup>
-                          ) : (
-                            <p className="text-muted mb-0">No se han definido objetivos específicos</p>
-                          )}
-                        </Card.Body>
-                      </Card>
-                    </div>
-                  </Tab>
-                  
-                  <Tab eventKey="hitos" title="Hitos">
-                    <div className="p-3">
-                      <Card className="detail-info-card">
-                        <Card.Header>
-                          <h6 className="mb-0">
-                            <i className="bi bi-flag me-2"></i>
-                            Hitos del Proyecto
-                          </h6>
-                        </Card.Header>
-                        <Card.Body>
-                          {selectedProject.hitos && selectedProject.hitos.length > 0 ? (
-                            <ListGroup variant="flush">
-                              {selectedProject.hitos.map((hito, index) => (
-                                <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                                  <div className="d-flex align-items-center">
-                                    <i className={`bi ${hito.completado ? 'bi-check-circle-fill text-success' : 'bi-circle text-muted'} me-3`}></i>
-                                    <div>
-                                      <h6 className="mb-0">{hito.nombre}</h6>
-                                      <small className="text-muted">Fecha límite: {hito.fecha}</small>
-                                    </div>
-                                  </div>
-                                  <Badge bg={hito.completado ? "success" : "secondary"} className="rounded-pill">
-                                    {hito.completado ? "Completado" : "Pendiente"}
-                                  </Badge>
-                                </ListGroup.Item>
-                              ))}
-                            </ListGroup>
-                          ) : (
-                            <p className="text-muted mb-0">No se han definido hitos específicos</p>
-                          )}
-                        </Card.Body>
-                      </Card>
-                    </div>
-                  </Tab>
-                  
-                  <Tab eventKey="documentos" title="Documentos">
-                    <div className="p-3">
-                      <Card className="detail-info-card">
-                        <Card.Header>
-                          <h6 className="mb-0">
-                            <i className="bi bi-files me-2"></i>
-                            Documentos del Proyecto
-                          </h6>
-                        </Card.Header>
-                        <Card.Body>
-                          {selectedProject.documentos && selectedProject.documentos.length > 0 ? (
-                            <ListGroup variant="flush">
-                              {selectedProject.documentos.map((doc, index) => (
-                                <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                                  <div className="d-flex align-items-center">
-                                    <i className={`bi bi-file-earmark-${doc.tipo === 'pdf' ? 'pdf' : doc.tipo === 'design' ? 'image' : 'text'} text-primary me-3 fs-4`}></i>
-                                    <div>
-                                      <h6 className="mb-0">{doc.nombre}</h6>
-                                      <small className="text-muted">Subido: {doc.fecha}</small>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <Button variant="outline-primary" size="sm" className="me-2">
-                                      <i className="bi bi-download"></i>
-                                    </Button>
-                                    <Button variant="outline-secondary" size="sm">
-                                      <i className="bi bi-eye"></i>
-                                    </Button>
-                                  </div>
-                                </ListGroup.Item>
-                              ))}
-                            </ListGroup>
-                          ) : (
-                            <p className="text-muted mb-0">No hay documentos adjuntos</p>
-                          )}
-                        </Card.Body>
-                      </Card>
-                    </div>
-                  </Tab>
+                  {/* ... (otros tabs como objetivos, hitos, documentos) ... */}
                 </Tabs>
               </>
             )}

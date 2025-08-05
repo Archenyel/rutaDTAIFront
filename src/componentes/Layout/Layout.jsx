@@ -3,13 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./Layout.css";
 
 const Layout = ({ children }) => {
-
-  console.log(localStorage.getItem("userRole"));
-  console.log(localStorage.getItem("userId"));
-  console.log(localStorage.getItem("userName"));
-
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const sinLayout = ["/login", "/registro"];
   const ocultarLayout = sinLayout.includes(location.pathname);
@@ -21,6 +16,95 @@ const Layout = ({ children }) => {
 
   const handlePerfil = () => {
     navigate("/perfil");
+  };
+
+  const userRole = localStorage.getItem("userRole"); // "0", "1", "2"
+  const fotoPerfil = localStorage.getItem("userPhoto");
+  const userName = localStorage.getItem("userName") || "U";
+
+  // Define ruta de dashboard según rol
+  const dashboardRoute = () => {
+    if (userRole === "0") return "/dashboardSuperadmin";
+    if (userRole === "1") return "/dashboardAdmin";
+    if (userRole === "2") return "/dashboardAlumno";
+    return "/dashboard"; // default
+  };
+
+  const renderNavLinks = () => {
+    // Alumno
+    if (userRole === "2") {
+      return (
+        <>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/proyectos")}
+            type="button"
+          >
+            Proyectos
+          </button>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/kanban")}
+            type="button"
+          >
+            Tareas
+          </button>
+        </>
+      );
+    }
+
+    // Admin
+    if (userRole === "1") {
+      return (
+        <>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/gestionProyectos")}
+            type="button"
+          >
+            Proyectos
+          </button>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/programas")}
+            type="button"
+          >
+            Programas
+          </button>
+        </>
+      );
+    }
+
+    // Superadmin
+    if (userRole === "0") {
+      return (
+        <>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/SuperadminKanban")}
+            type="button"
+          >
+            Tareas
+          </button>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/programas")}
+            type="button"
+          >
+            Programas
+          </button>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/portafolios")}
+            type="button"
+          >
+            Portafolios
+          </button>
+        </>
+      );
+    }
+
+    return null;
   };
 
   if (ocultarLayout) {
@@ -38,13 +122,72 @@ const Layout = ({ children }) => {
         <div className="container-fluid">
           <div className="row align-items-center py-3">
             <div className="col">
-              <h4 className="mb-0 text-white">RutaDTAI - Sistema</h4>
+              {/* Aquí el texto que navega al dashboard según rol */}
+              <button
+                onClick={() => navigate(dashboardRoute())}
+                className="header-brand-btn"
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  margin: 0,
+                  color: "white",
+                  fontSize: "1.5rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                aria-label="Ir al dashboard"
+              >
+                RutaDTAI - Sistema
+              </button>
             </div>
-            <div className="col-auto">
-              <button className="header-btn me-2" onClick={handlePerfil}>
+            <div className="col-auto d-flex align-items-center gap-2">
+              {renderNavLinks()}
+
+              <button
+                className="header-btn me-2"
+                onClick={handlePerfil}
+                type="button"
+              >
                 Ver perfil
               </button>
-              <button className="header-btn logout-btn" onClick={handleLogout}>
+
+              {fotoPerfil ? (
+                <img
+                  src={fotoPerfil}
+                  alt="Foto de perfil"
+                  className="rounded-circle"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    objectFit: "cover",
+                    border: "2px solid white",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#666",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "1rem",
+                  }}
+                >
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+              )}
+
+              <button
+                className="header-btn logout-btn"
+                onClick={handleLogout}
+                type="button"
+              >
                 Cerrar sesión
               </button>
             </div>

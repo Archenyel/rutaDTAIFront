@@ -17,6 +17,7 @@ import Programas from "./modulos/dashboard/cards/Programas";
 import Proyecto from "./modulos/proyectos/Proyecto";
 import GestionProyectos from "./modulos/dashboard/gestionProyectos/GestionProyectos";
 import ListaProyectos from "./componentes/listaProyectos";
+import Perfil from "./modulos/perfil/perfil";
 
 function App() {
   return (
@@ -37,7 +38,7 @@ function App() {
         <Route path="/programas" element={<Programas />} />
         <Route path="/gestionProyectos" element={<Layout><GestionProyectos /></Layout>} />
         <Route path="/listaProyectos" element={<Layout><ListaProyectos /></Layout>} />
-
+        <Route path="/perfil" element={<Layout><Perfil /></Layout>} />
 
       </Routes>
     </Router>
