@@ -41,6 +41,7 @@ const AdminKanban = () => {
     estado: "Por hacer",
     prioridad: "media",
     responsable: currentUser,
+    estudianteAsignado: "", // Cambio: un solo estudiante
     progreso: 0,
     proyectoId: proyectoId
   });
@@ -54,8 +55,9 @@ const AdminKanban = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [newComment, setNewComment] = useState("");
 
-  // Lista de miembros del equipo
+  // Lista de miembros del equipo y estudiantes
   const [members, setMembers] = useState([currentUser]);
+  const [estudiantes, setEstudiantes] = useState([]);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -70,6 +72,16 @@ const AdminKanban = () => {
         // Cargar miembros del equipo
         const equipo = proyectoResponse.data.equipo || [];
         setMembers([currentUser, ...equipo]);
+        
+        // Cargar estudiantes del proyecto
+        try {
+          const estudiantesResponse = await api.get(`/proyectos/alumnos/${proyectoId}`);
+          setEstudiantes(estudiantesResponse.data.alumnos || []);
+          console.log('Estudiantes cargados:', estudiantesResponse.data);
+        } catch (error) {
+          console.warn('No se pudieron cargar los estudiantes:', error);
+          setEstudiantes([]);
+        }
         
         // Cargar tareas
         const tareasResponse = await api.get(`/tareas/proyecto/${proyectoId}`);
@@ -96,7 +108,12 @@ const AdminKanban = () => {
       setLoading(prev => ({...prev, acciones: true}));
       setError(null);
 
-      const response = await api.post('/tareas/nuevaTarea', newTask);
+      const taskData = {
+        ...newTask,
+        estudianteAsignado: newTask.estudianteAsignado || null
+      };
+
+      const response = await api.post('/tareas/nuevaTarea', taskData);
       
       setTareas([...tareas, response.data]);
       setNewTask({
@@ -105,6 +122,7 @@ const AdminKanban = () => {
         estado: "Por hacer",
         prioridad: "media",
         responsable: currentUser,
+        estudianteAsignado: "",
         progreso: 0,
         proyectoId: proyectoId
       });
@@ -218,6 +236,14 @@ const AdminKanban = () => {
     return type === 'estado' 
       ? estados[value] || 'secondary'
       : prioridades[value] || 'secondary';
+  };
+
+  // Función para obtener nombre de estudiante asignado
+  const getEstudianteNombre = (estudianteId) => {
+    if (!estudianteId) return 'Sin asignar';
+    
+    const estudiante = estudiantes.find(est => est.id === estudianteId);
+    return estudiante ? estudiante.nombre : `ID: ${estudianteId}`;
   };
 
   // Vista de carga
@@ -448,6 +474,14 @@ const AdminKanban = () => {
                         <i className="bi bi-person-circle me-2"></i>
                         {tarea.responsable}
                       </span>
+                      {tarea.estudianteAsignado && (
+                        <div className="mt-1">
+                          <small className="text-muted">
+                            <i className="bi bi-person-fill me-1"></i>
+                            Estudiante: {getEstudianteNombre(tarea.estudianteAsignado)}
+                          </small>
+                        </div>
+                      )}
                     </td>
                     <td>
                       <div className="d-flex align-items-center">
@@ -597,6 +631,29 @@ const AdminKanban = () => {
               
               <Col md={12}>
                 <Form.Group>
+                  <Form.Label>Estudiante Asignado</Form.Label>
+                  <Form.Select
+                    value={newTask.estudianteAsignado}
+                    onChange={(e) => setNewTask({...newTask, estudianteAsignado: e.target.value})}
+                  >
+                    <option value="">Seleccionar estudiante (opcional)</option>
+                    {estudiantes.map(estudiante => (
+                      <option key={estudiante.id} value={estudiante.id}>
+                        {estudiante.nombre} ({estudiante.email})
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {estudiantes.length === 0 && (
+                    <Form.Text className="text-muted">
+                      <i className="bi bi-info-circle me-1"></i>
+                      No hay estudiantes registrados en este proyecto
+                    </Form.Text>
+                  )}
+                </Form.Group>
+              </Col>
+              
+              <Col md={12}>
+                <Form.Group>
                   <Form.Label>Progreso: {newTask.progreso}%</Form.Label>
                   <Form.Range
                     min="0"
@@ -709,6 +766,29 @@ const AdminKanban = () => {
                         <option key={member} value={member}>{member}</option>
                       ))}
                     </Form.Select>
+                  </Form.Group>
+                </Col>
+                
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label>Estudiante Asignado</Form.Label>
+                    <Form.Select
+                      value={editingTask.estudianteAsignado || ""}
+                      onChange={(e) => setEditingTask({...editingTask, estudianteAsignado: e.target.value})}
+                    >
+                      <option value="">Seleccionar estudiante (opcional)</option>
+                      {estudiantes.map(estudiante => (
+                        <option key={estudiante.id} value={estudiante.id}>
+                          {estudiante.nombre} ({estudiante.email})
+                        </option>
+                      ))}
+                    </Form.Select>
+                    {estudiantes.length === 0 && (
+                      <Form.Text className="text-muted">
+                        <i className="bi bi-info-circle me-1"></i>
+                        No hay estudiantes registrados en este proyecto
+                      </Form.Text>
+                    )}
                   </Form.Group>
                 </Col>
                 
