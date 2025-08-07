@@ -33,6 +33,8 @@ const Kanban = () => {
   const { id: proyectoId } = useParams();
   const navigate = useNavigate();
 
+  const userId = localStorage.getItem("userId");
+
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
   useEffect(() => {
@@ -72,8 +74,8 @@ const Kanban = () => {
       setLoading(true);
       setError(null);
       
-      // Cambiar endpoint para traer todas las tareas
-      const response = await api.get('/tareas');
+      // Cambiar endpoint para traer las tareas del usuario
+      const response = await api.get(`/tareas/usuario/${userId}`);
       const tareasData = response.data;
 
       if (!Array.isArray(tareasData)) {
