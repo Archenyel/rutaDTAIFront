@@ -20,6 +20,7 @@ const GestionUsuarios = () => {
   const [editUsuario, setEditUsuario] = useState(null);
   const [selectedUsuario, setSelectedUsuario] = useState(null);
   const [selectedProject, setSelectedProject] = useState("");
+  const [isProjectLeader, setIsProjectLeader] = useState(false);
 
   useEffect(() => {
     loadUsuarios();
@@ -123,6 +124,7 @@ const GestionUsuarios = () => {
   const handleAssignToProject = (usuario) => {
     setSelectedUsuario(usuario);
     setSelectedProject("");
+    setIsProjectLeader(false);
     setShowProjectModal(true);
   };
 
@@ -137,17 +139,20 @@ const GestionUsuarios = () => {
       setLoading(true);
       setError(null);
 
-      // Aquí puedes implementar la lógica para asignar el alumno al proyecto
-      // Por ejemplo, actualizar una tabla de asignaciones o agregar el alumno al proyecto
+      // Asignar el alumno al proyecto
       await api.put('/proyectos/asignarAlumno/asignar', {
         idAlumno: selectedUsuario.id,
-        idProyecto: selectedProject
+        idProyecto: selectedProject,
+        esLider: isProjectLeader
       });
 
       setShowProjectModal(false);
       setSelectedUsuario(null);
       setSelectedProject("");
-      setSuccess(`Alumno ${selectedUsuario.usuario} asignado al proyecto correctamente`);
+      setIsProjectLeader(false);
+      
+      const leaderText = isProjectLeader ? ' como líder' : '';
+      setSuccess(`Alumno ${selectedUsuario.usuario} asignado al proyecto${leaderText} correctamente`);
       
       setTimeout(() => setSuccess(null), 3000);
       
@@ -526,6 +531,7 @@ const GestionUsuarios = () => {
           setShowProjectModal(false); 
           setSelectedUsuario(null);
           setSelectedProject("");
+          setIsProjectLeader(false);
         }} 
         centered
         size="md"
@@ -577,6 +583,37 @@ const GestionUsuarios = () => {
                 </Form.Text>
               </Form.Group>
 
+              <Form.Group className="mb-3">
+                <div className="border rounded p-3">
+                  <Form.Check
+                    type="checkbox"
+                    id="project-leader-checkbox"
+                    checked={isProjectLeader}
+                    onChange={(e) => setIsProjectLeader(e.target.checked)}
+                    disabled={loading}
+                    label={
+                      <div>
+                        <strong>
+                          <i className="bi bi-star me-1 text-warning"></i>
+                          Asignar como Líder del Proyecto
+                        </strong>
+                        <div className="small text-muted mt-1">
+                          El alumno tendrá permisos especiales y responsabilidades de liderazgo en este proyecto
+                        </div>
+                      </div>
+                    }
+                  />
+                  
+                  {isProjectLeader && (
+                    <Alert variant="info" className="mt-3 mb-0">
+                      <i className="bi bi-info-circle me-2"></i>
+                      <strong>Líder de Proyecto:</strong> Este alumno podrá gestionar tareas, 
+                      coordinar actividades y tomar decisiones importantes del proyecto.
+                    </Alert>
+                  )}
+                </div>
+              </Form.Group>
+
               {proyectos.length === 0 && (
                 <Alert variant="warning">
                   <i className="bi bi-exclamation-triangle me-2"></i>
@@ -593,6 +630,7 @@ const GestionUsuarios = () => {
               setShowProjectModal(false); 
               setSelectedUsuario(null);
               setSelectedProject("");
+              setIsProjectLeader(false);
             }}
             disabled={loading}
           >
@@ -600,7 +638,7 @@ const GestionUsuarios = () => {
             Cancelar
           </Button>
           <Button 
-            variant="success"
+            variant={isProjectLeader ? "warning" : "success"}
             onClick={handleConfirmAssignProject}
             disabled={loading || !selectedProject || proyectos.length === 0}
           >
@@ -611,8 +649,8 @@ const GestionUsuarios = () => {
               </>
             ) : (
               <>
-                <i className="bi bi-check-lg me-2"></i>
-                Asignar al Proyecto
+                <i className={`bi ${isProjectLeader ? 'bi-star' : 'bi-check-lg'} me-2`}></i>
+                {isProjectLeader ? 'Asignar como Líder' : 'Asignar al Proyecto'}
               </>
             )}
           </Button>
