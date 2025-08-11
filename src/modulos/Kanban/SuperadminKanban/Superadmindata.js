@@ -24,7 +24,7 @@ export const projectsData = [
 
 export const tasksData = [
   {
-    id: 1,
+    id: "1",  // Cambiar a string
     projectId: 1,
     title: "Diseñar login",
     description: "Crear diseño limpio para pantalla de login.",
@@ -37,7 +37,7 @@ export const tasksData = [
     comments: []
   },
   {
-    id: 2,
+    id: "2",  // Cambiar a string
     projectId: 1,
     title: "Backend usuarios",
     description: "Crear endpoints para gestión de usuarios.",
@@ -52,7 +52,7 @@ export const tasksData = [
     ]
   },
   {
-    id: 3,
+    id: "3",
     projectId: 2,
     title: "Test de login",
     description: "Verificar flujo de inicio de sesión.",
@@ -65,7 +65,7 @@ export const tasksData = [
     comments: []
   },
   {
-    id: 4,
+    id: "4",
     projectId: 3,
     title: "Deploy a producción",
     description: "Subir la versión estable.",
