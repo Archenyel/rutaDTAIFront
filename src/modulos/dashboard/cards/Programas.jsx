@@ -6,6 +6,7 @@ import "./Programas.css";
 import api from "../../../api/api";
 
 const Programas = () => {
+  const rol = localStorage.getItem("userRole");
   const [programas, setProgramas] = useState([]);
   const [programasFiltrados, setProgramasFiltrados] = useState([]);
   const [portafolios, setPortafolios] = useState([]);

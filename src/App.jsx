@@ -19,6 +19,7 @@ import GestionProyectos from "./modulos/dashboard/gestionProyectos/GestionProyec
 import ListaProyectos from "./componentes/listaProyectos";
 import Perfil from "./modulos/perfil/perfil";
 import GestionUsuarios from "./componentes/GestionUsuarios";
+import ListaProyectosAlumno from "./componentes/listaProyectosAlumno";
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function App() {
         <Route path="/programas" element={<Programas />} />
         <Route path="/gestionProyectos" element={<Layout><GestionProyectos /></Layout>} />
         <Route path="/listaProyectos" element={<Layout><ListaProyectos /></Layout>} />
+
+        <Route path="/listaProyectosAlumno" element={<Layout><ListaProyectosAlumno /></Layout>} />
         
         <Route path="/gestionUsuarios" element={<Layout><GestionUsuarios /></Layout>} />
 

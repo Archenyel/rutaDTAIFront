@@ -37,7 +37,7 @@ const Layout = ({ children }) => {
         <>
           <button
             className="header-btn me-2"
-            onClick={() => navigate("/proyectos")}
+            onClick={() => navigate("/listaProyectosAlumno")}
             type="button"
           >
             Proyectos
@@ -59,7 +59,7 @@ const Layout = ({ children }) => {
         <>
           <button
             className="header-btn me-2"
-            onClick={() => navigate("/gestionProyectos")}
+            onClick={() => navigate("/listaProyectos")}
             type="button"
           >
             Proyectos

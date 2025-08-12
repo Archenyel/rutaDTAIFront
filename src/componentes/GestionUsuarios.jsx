@@ -17,10 +17,17 @@ const GestionUsuarios = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
   const [editUsuario, setEditUsuario] = useState(null);
   const [selectedUsuario, setSelectedUsuario] = useState(null);
   const [selectedProject, setSelectedProject] = useState("");
   const [isProjectLeader, setIsProjectLeader] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({
+    usuario: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
 
   useEffect(() => {
     loadUsuarios();
@@ -164,6 +171,53 @@ const GestionUsuarios = () => {
     }
   };
 
+  // Crear nuevo administrador
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    
+    // Validaciones
+    if (newAdmin.password !== newAdmin.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    
+    if (newAdmin.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const adminData = {
+        usuario: newAdmin.usuario,
+        email: newAdmin.email,
+        password: newAdmin.password,
+        rol: 1 // 1 = Administrador
+      };
+
+      await api.post('auth/registro/admins', adminData);
+
+      setShowCreateAdminModal(false);
+      setNewAdmin({
+        usuario: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+      });
+      
+      setSuccess('Administrador creado exitosamente');
+      setTimeout(() => setSuccess(null), 3000);
+      
+    } catch (error) {
+      console.error('Error creating admin:', error);
+      setError(`Error al crear administrador: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container fluid className="usuarios-container py-4">
       {/* Header */}
@@ -173,18 +227,28 @@ const GestionUsuarios = () => {
             <div>
               <h1 className="display-6 fw-bold mb-2">
                 <i className="bi bi-people me-3 text-primary"></i>
-                Gestión de Alumnos
+                Gestión de Usuarios
               </h1>
               <p className="text-muted lead">Administra todos los alumnos de la plataforma</p>
             </div>
-            <Button 
-              variant="outline-primary"
-              onClick={loadUsuarios}
-              disabled={loading}
-            >
-              <i className="bi bi-arrow-clockwise me-2"></i>
-              Actualizar
-            </Button>
+            <div className="d-flex gap-2">
+              <Button 
+                variant="success"
+                onClick={() => setShowCreateAdminModal(true)}
+                disabled={loading}
+              >
+                <i className="bi bi-person-plus me-2"></i>
+                Crear Administrador
+              </Button>
+              <Button 
+                variant="outline-primary"
+                onClick={loadUsuarios}
+                disabled={loading}
+              >
+                <i className="bi bi-arrow-clockwise me-2"></i>
+                Actualizar
+              </Button>
+            </div>
           </div>
         </Col>
       </Row>
@@ -655,6 +719,185 @@ const GestionUsuarios = () => {
             )}
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      {/* Modal para crear administrador */}
+      <Modal 
+        show={showCreateAdminModal} 
+        onHide={() => { 
+          setShowCreateAdminModal(false); 
+          setNewAdmin({
+            usuario: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+          }); 
+        }} 
+        centered
+        size="md"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <i className="bi bi-person-plus-fill me-2 text-success"></i>
+            Crear Nuevo Administrador
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="info">
+            <i className="bi bi-info-circle me-2"></i>
+            <strong>Importante:</strong> Está creando un usuario con permisos de administrador. 
+            Este usuario tendrá acceso completo al sistema.
+          </Alert>
+          
+          <Form onSubmit={handleCreateAdmin}>
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-person me-1"></i>
+                Nombre de Usuario *
+              </Form.Label>
+              <Form.Control
+                type="text"
+                value={newAdmin.usuario}
+                onChange={(e) => setNewAdmin({ ...newAdmin, usuario: e.target.value })}
+                placeholder="Nombre de usuario del administrador"
+                required
+                disabled={loading}
+                minLength={3}
+              />
+              <Form.Text className="text-muted">
+                Mínimo 3 caracteres, sin espacios
+              </Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-envelope me-1"></i>
+                Email *
+              </Form.Label>
+              <Form.Control
+                type="email"
+                value={newAdmin.email}
+                onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                placeholder="admin@ejemplo.com"
+                required
+                disabled={loading}
+              />
+              <Form.Text className="text-muted">
+                Email corporativo recomendado
+              </Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-lock me-1"></i>
+                Contraseña *
+              </Form.Label>
+              <Form.Control
+                type="password"
+                value={newAdmin.password}
+                onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                placeholder="Contraseña segura"
+                required
+                disabled={loading}
+                minLength={6}
+              />
+              <Form.Text className="text-muted">
+                Mínimo 6 caracteres, incluya números y símbolos
+              </Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label className="fw-semibold">
+                <i className="bi bi-lock-fill me-1"></i>
+                Confirmar Contraseña *
+              </Form.Label>
+              <Form.Control
+                type="password"
+                value={newAdmin.confirmPassword}
+                onChange={(e) => setNewAdmin({ ...newAdmin, confirmPassword: e.target.value })}
+                placeholder="Confirme la contraseña"
+                required
+                disabled={loading}
+                minLength={6}
+                className={
+                  newAdmin.confirmPassword && newAdmin.password !== newAdmin.confirmPassword 
+                    ? 'is-invalid' 
+                    : newAdmin.confirmPassword && newAdmin.password === newAdmin.confirmPassword 
+                    ? 'is-valid' 
+                    : ''
+                }
+              />
+              {newAdmin.confirmPassword && newAdmin.password !== newAdmin.confirmPassword && (
+                <div className="invalid-feedback">
+                  Las contraseñas no coinciden
+                </div>
+              )}
+              {newAdmin.confirmPassword && newAdmin.password === newAdmin.confirmPassword && (
+                <div className="valid-feedback">
+                  Las contraseñas coinciden
+                </div>
+              )}
+            </Form.Group>
+
+            <div className="bg-light border rounded p-3 mb-3">
+              <h6 className="fw-bold mb-2">
+                <i className="bi bi-shield-check me-1 text-success"></i>
+                Permisos del Administrador
+              </h6>
+              <ul className="small mb-0">
+                <li>Gestión completa de usuarios y alumnos</li>
+                <li>Creación y administración de proyectos</li>
+                <li>Acceso a todas las tareas y tableros Kanban</li>
+                <li>Configuración del sistema</li>
+                <li>Reportes y estadísticas</li>
+              </ul>
+            </div>
+
+            <div className="d-flex justify-content-end gap-2">
+              <Button 
+                variant="outline-secondary" 
+                onClick={() => { 
+                  setShowCreateAdminModal(false); 
+                  setNewAdmin({
+                    usuario: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
+                  }); 
+                }}
+                disabled={loading}
+              >
+                <i className="bi bi-x-lg me-2"></i>
+                Cancelar
+              </Button>
+              <Button 
+                variant="success"
+                type="submit"
+                disabled={
+                  loading || 
+                  !newAdmin.usuario || 
+                  !newAdmin.email || 
+                  !newAdmin.password || 
+                  !newAdmin.confirmPassword ||
+                  newAdmin.password !== newAdmin.confirmPassword ||
+                  newAdmin.password.length < 6
+                }
+              >
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Creando...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-check-lg me-2"></i>
+                    Crear Administrador
+                  </>
+                )}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
       </Modal>
     </Container>
   );

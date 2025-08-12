@@ -18,8 +18,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import api from "../../../api/api";
 
 const AdminKanban = () => {
+
   // Usuario y parámetros
-  const currentUser = "Administrador";
+  const currentUser = localStorage.getItem("userName") || "Administrador";
   const { id: proyectoId } = useParams();
   const navigate = useNavigate();
 
