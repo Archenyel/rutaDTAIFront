@@ -56,6 +56,10 @@ const AdminKanban = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [newComment, setNewComment] = useState("");
 
+  // Estados para firma/aprobación
+  const [showSignModal, setShowSignModal] = useState(false);
+  const [signComment, setSignComment] = useState("");
+
   // Lista de miembros del equipo y estudiantes
   const [members, setMembers] = useState([currentUser]);
   const [estudiantes, setEstudiantes] = useState([]);
@@ -177,6 +181,40 @@ const AdminKanban = () => {
       
     } catch (error) {
       setError(`Error al eliminar tarea: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setLoading(prev => ({...prev, acciones: false}));
+      setTimeout(() => setSuccess(null), 3000);
+    }
+  };
+
+  // Manejar firma/aprobación de tarea
+  const handleSignTask = async () => {
+    if (!selectedTask) return;
+
+    try {
+      setLoading(prev => ({...prev, acciones: true}));
+      setError(null);
+
+      const signatureData = {
+        comentarioFirma: signComment.trim() || "Documentos y tarea aprobados"
+      };
+
+      // Usar endpoint específico para firmar
+      const response = await api.put(`/tareas/${selectedTask.id}/firmar`, signatureData);
+      
+      // Actualizar la tarea en el estado local
+      setTareas(tareas.map(t => 
+        t.id === selectedTask.id ? response.data.tarea : t
+      ));
+      
+      setShowSignModal(false);
+      setSelectedTask(null);
+      setSignComment("");
+      setSuccess(response.data.message || 'Tarea firmada y aprobada exitosamente');
+      
+    } catch (error) {
+      console.error('Error al firmar tarea:', error);
+      setError(`Error al firmar tarea: ${error.response?.data?.error || error.message}`);
     } finally {
       setLoading(prev => ({...prev, acciones: false}));
       setTimeout(() => setSuccess(null), 3000);
@@ -459,6 +497,14 @@ const AdminKanban = () => {
                         <small className="text-muted">
                           {tarea.descripcion || 'Sin descripción'}
                         </small>
+                        {tarea.firmadoPor && (
+                          <div className="mt-1">
+                            <small className="text-success">
+                              <i className="bi bi-check-circle-fill me-1"></i>
+                              Firmado por {tarea.firmadoPor} el {new Date(tarea.fechaFirma).toLocaleDateString()}
+                            </small>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td>
@@ -514,8 +560,8 @@ const AdminKanban = () => {
                             setEditingTask(tarea);
                             setShowEditModal(true);
                           }}
-                          disabled={loading.acciones}
-                          title="Editar"
+                          disabled={loading.acciones || tarea.firmadoPor}
+                          title={tarea.firmadoPor ? "Tarea ya firmada" : "Editar"}
                         >
                           <i className="bi bi-pencil"></i>
                         </Button>
@@ -533,13 +579,28 @@ const AdminKanban = () => {
                           <i className="bi bi-chat-left-text"></i>
                           <span className="ms-1">{tarea.comentarios?.length || 0}</span>
                         </Button>
+
+                        {!tarea.firmadoPor && tarea.estado === 'En revisión' && (
+                          <Button
+                            variant="outline-warning"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedTask(tarea);
+                              setShowSignModal(true);
+                            }}
+                            disabled={loading.acciones}
+                            title="Firmar y aprobar tarea"
+                          >
+                            <i className="bi bi-patch-check"></i>
+                          </Button>
+                        )}
                         
                         <Button
                           variant="outline-danger"
                           size="sm"
                           onClick={() => handleDeleteTask(tarea.id)}
-                          disabled={loading.acciones}
-                          title="Eliminar"
+                          disabled={loading.acciones || tarea.firmadoPor}
+                          title={tarea.firmadoPor ? "No se puede eliminar tarea firmada" : "Eliminar"}
                         >
                           <i className="bi bi-trash"></i>
                         </Button>
@@ -906,6 +967,110 @@ const AdminKanban = () => {
             </>
           )}
         </Modal.Body>
+      </Modal>
+
+      {/* Modal para firma/aprobación */}
+      <Modal show={showSignModal} onHide={() => setShowSignModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <i className="bi bi-patch-check-fill me-2 text-warning"></i>
+            Firmar y Aprobar Tarea
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedTask && (
+            <>
+              <div className="alert alert-info">
+                <i className="bi bi-info-circle me-2"></i>
+                <strong>Importante:</strong> Al firmar esta tarea confirmas que:
+                <ul className="mt-2 mb-0">
+                  <li>Los documentos entregados están completos y correctos</li>
+                  <li>La tarea cumple con todos los requisitos</li>
+                  <li>El trabajo está aprobado oficialmente</li>
+                  <li>La tarea se marcará como "Completada" automáticamente</li>
+                </ul>
+              </div>
+
+              <div className="mb-3">
+                <h6 className="fw-bold">Tarea a firmar:</h6>
+                <div className="bg-light p-3 rounded">
+                  <h6 className="mb-1">{selectedTask.titulo}</h6>
+                  <p className="mb-1 text-muted">{selectedTask.descripcion}</p>
+                  <div className="d-flex gap-3">
+                    <small>
+                      <strong>Estado:</strong> {selectedTask.estado}
+                    </small>
+                    <small>
+                      <strong>Progreso:</strong> {selectedTask.progreso}%
+                    </small>
+                  </div>
+                  {selectedTask.estudianteAsignado && (
+                    <small className="text-muted">
+                      <strong>Estudiante:</strong> {getEstudianteNombre(selectedTask.estudianteAsignado)}
+                    </small>
+                  )}
+                </div>
+              </div>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-semibold">
+                  <i className="bi bi-chat-left-quote me-1"></i>
+                  Comentario de aprobación (opcional)
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={signComment}
+                  onChange={(e) => setSignComment(e.target.value)}
+                  placeholder="Ejemplo: Documentos completos y correctos. Trabajo aprobado según especificaciones."
+                />
+                <Form.Text className="text-muted">
+                  Este comentario se guardará como registro de la aprobación
+                </Form.Text>
+              </Form.Group>
+
+              <div className="bg-warning bg-opacity-10 border border-warning rounded p-3">
+                <div className="d-flex align-items-center">
+                  <i className="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                  <strong>Atención:</strong>
+                </div>
+                <p className="mb-0 mt-1 small">
+                  Una vez firmada, la tarea no podrá ser editada ni eliminada. 
+                  Esta acción es permanente.
+                </p>
+              </div>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button 
+            variant="outline-secondary" 
+            onClick={() => {
+              setShowSignModal(false);
+              setSignComment("");
+            }}
+          >
+            <i className="bi bi-x-lg me-2"></i>
+            Cancelar
+          </Button>
+          <Button
+            variant="warning"
+            onClick={handleSignTask}
+            disabled={loading.acciones}
+          >
+            {loading.acciones ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Firmando...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-patch-check-fill me-2"></i>
+                Firmar y Aprobar
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   );
