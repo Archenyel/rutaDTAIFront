@@ -196,7 +196,8 @@ const AdminKanban = () => {
       setError(null);
 
       const signatureData = {
-        comentarioFirma: signComment.trim() || "Documentos y tarea aprobados"
+        comentarioFirma: signComment.trim() || "Documentos y tarea aprobados",
+        firmadoPor: currentUser,
       };
 
       // Usar endpoint específico para firmar
@@ -501,7 +502,7 @@ const AdminKanban = () => {
                           <div className="mt-1">
                             <small className="text-success">
                               <i className="bi bi-check-circle-fill me-1"></i>
-                              Firmado por {tarea.firmadoPor} el {new Date(tarea.fechaFirma).toLocaleDateString()}
+                              Firmado por {tarea.firmadoPor}
                             </small>
                           </div>
                         )}
