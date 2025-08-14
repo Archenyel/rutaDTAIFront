@@ -100,11 +100,12 @@ const Kanban = () => {
             title: tarea.titulo || tarea.nombre,
             description: tarea.descripcion || "",
             priority: tarea.prioridad || "media",
+            estado: estado,
             responsable: tarea.responsable || "Sin asignar",
             progress: tarea.progreso || 0,
             fileUrl: tarea.archivoUrl || "",
             comentarios: tarea.comentarios || [],
-            // Mantener proyectoId para futuras operaciones
+            estudianteAsignado: tarea.estudianteAsignado || "Sin asignar",
             proyectoId: tarea.proyectoId || proyectoId
           });
         }
@@ -237,8 +238,9 @@ const Kanban = () => {
 
       await api.put(`/tareas/${selectedTask.id}`, {
         titulo: selectedTask.title,
-        descripcion: selectedTask.description,
+        estudianteAsignado: selectedTask.estudianteAsignado,
         estado: selectedTask.estado || "Por hacer",
+        descripcion: selectedTask.description,
         prioridad: selectedTask.priority,
         responsable: selectedTask.responsable,
         progreso: selectedTask.progress,

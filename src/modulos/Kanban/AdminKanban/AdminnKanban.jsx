@@ -201,6 +201,7 @@ const AdminKanban = () => {
         ...selectedTask,
         comentarios: [...(selectedTask.comentarios || []), comment]
       };
+      
 
       const response = await api.put(`/tareas/${selectedTask.id}`, updatedTask);
       
