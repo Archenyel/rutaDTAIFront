@@ -20,35 +20,159 @@ import ListaProyectos from "./componentes/listaProyectos";
 import Perfil from "./modulos/perfil/perfil";
 import GestionUsuarios from "./componentes/GestionUsuarios";
 import ListaProyectosAlumno from "./componentes/listaProyectosAlumno";
+import ProtectedRoute from "./componentes/ProtectedRoute";
+import UploadToGCS from "./pages/UploadToGCS";
+
 
 function App() {
   return (
     <Router>
+
       <Routes>
+        {/* Rutas públicas */}
         <Route path="/" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/upload" element={<UploadToGCS />} />
+
         
-        <Route path="/dashboardSuperadmin" element={<SuperAdmin />} />
-
-        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
-        <Route path="/dashboardAlumno" element={<Layout><DashboardAlumno /></Layout>} />
-        <Route path="/dashboardAdmin" element={<><DashboardAdmin /></>} />
-        <Route path="/adminKanban/:id" element={<Layout><AdminKanban /></Layout>} />
-        <Route path="/SuperadminKanban" element={<Layout><SuperadminKanban /></Layout>} />
-        <Route path="/proyectos" element={<Layout><Proyecto /></Layout>} />
-        <Route path="/portafolios" element={<Portafolios />} />
-        <Route path="/programas" element={<Programas />} />
-        <Route path="/gestionProyectos" element={<Layout><GestionProyectos /></Layout>} />
-        <Route path="/listaProyectos" element={<Layout><ListaProyectos /></Layout>} />
-
-        <Route path="/listaProyectosAlumno" element={<Layout><ListaProyectosAlumno /></Layout>} />
         
-        <Route path="/gestionUsuarios" element={<Layout><GestionUsuarios /></Layout>} />
+        {/* Rutas para Superadmin (rol 0) */}
+        <Route 
+          path="/dashboardSuperadmin" 
+          element={
+            <ProtectedRoute allowedRoles={[0]}>
+              <SuperAdmin />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/SuperadminKanban" 
+          element={
+            <ProtectedRoute allowedRoles={[0]}>
+              <Layout><SuperadminKanban /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/gestionUsuarios" 
+          element={
+            <ProtectedRoute allowedRoles={[0]}>
+              <Layout><GestionUsuarios /></Layout>
+            </ProtectedRoute>
+          } 
+        />
 
-        <Route path="/perfil" element={<Layout><Perfil /></Layout>} />
+        {/* Rutas para Admin (rol 1) */}
+        <Route 
+          path="/dashboardAdmin" 
+          element={
+            <ProtectedRoute allowedRoles={[0,1]}>
+              <DashboardAdmin />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/adminKanban/:id" 
+          element={
+            <ProtectedRoute allowedRoles={[0,1]}>
+              <Layout><AdminKanban /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/gestionProyectos" 
+          element={
+            <ProtectedRoute allowedRoles={[0,1]}>
+              <Layout><GestionProyectos /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/listaProyectos" 
+          element={
+            <ProtectedRoute allowedRoles={[0,1]}>
+              <Layout><ListaProyectos /></Layout>
+            </ProtectedRoute>
+          } 
+        />
 
-        <Route path="/alumno" element={<Layout><Alumno /></Layout>} />
-        <Route path="/kanban" element={<Layout><Kanban /></Layout>} />
+        {/* Rutas para Alumnos (rol 2) */}
+        <Route 
+          path="/dashboardAlumno" 
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <Layout><DashboardAlumno /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/listaProyectosAlumno" 
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <Layout><ListaProyectosAlumno /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/alumno" 
+          element={
+            <ProtectedRoute allowedRoles={[2]}>
+              <Layout><Alumno /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/kanban" 
+          element={
+            <ProtectedRoute allowedRoles={[0,1,2]}>
+              <Layout><Kanban /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Rutas compartidas entre roles autenticados */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute allowedRoles={[0, 1, 2]}>
+              <Layout><Dashboard /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/proyectos" 
+          element={
+            <ProtectedRoute allowedRoles={[0, 1, 2]}>
+              <Layout><Proyecto /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/perfil" 
+          element={
+            <ProtectedRoute allowedRoles={[0, 1, 2]}>
+              <Layout><Perfil /></Layout>
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Rutas que parecen públicas o legacy - evaluar si necesitan protección */}
+        <Route 
+          path="/portafolios" 
+          element={
+            <ProtectedRoute allowedRoles={[0]}>
+              <Portafolios />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/programas" 
+          element={
+            <ProtectedRoute allowedRoles={[0, 1, 2]}>
+              <Programas />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </Router>
   );

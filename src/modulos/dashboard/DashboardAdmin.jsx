@@ -57,10 +57,10 @@ const DashboardAdmin = ({ user }) => {
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <h1 className="display-6 fw-bold mb-2 welcome-title">
-                {greeting} {user?.nombre || "SuperAdministrador"}
+                {greeting} {user?.nombre || "Administrador"}
                 <span className="admin-badge ms-3">
                   <i className="bi bi-shield-lock me-1"></i>
-                  SuperAdmin
+                  Administrador
                 </span>
               </h1>
               <p className="text-muted lead">
