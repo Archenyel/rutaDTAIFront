@@ -17,11 +17,11 @@ import Programas from "./modulos/dashboard/cards/Programas";
 import Proyecto from "./modulos/proyectos/Proyecto";
 import GestionProyectos from "./modulos/dashboard/gestionProyectos/GestionProyectos";
 import ListaProyectos from "./componentes/listaProyectos";
-import Perfil from "./modulos/perfil/perfil";
 import GestionUsuarios from "./componentes/GestionUsuarios";
 import ListaProyectosAlumno from "./componentes/listaProyectosAlumno";
 import ProtectedRoute from "./componentes/ProtectedRoute";
 import UploadToGCS from "./pages/UploadToGCS";
+import Perfil from "./modulos/perfil/ModuloPerfil"
 
 
 function App() {
