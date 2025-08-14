@@ -855,12 +855,12 @@ const AdminKanban = () => {
                     <Card key={index} className="mb-3">
                       <Card.Body>
                         <div className="d-flex justify-content-between align-items-start mb-2">
-                          <strong>{comentario.autor}</strong>
+                          <strong>{comentario.author}</strong>
                           <small className="text-muted">
-                            {new Date(comentario.fecha).toLocaleString()}
+                            {new Date(comentario.timestamp).toLocaleDateString()}
                           </small>
                         </div>
-                        <p className="mb-0">{comentario.texto}</p>
+                        <p className="mb-0">{comentario.text}</p>
                       </Card.Body>
                     </Card>
                   ))

@@ -34,6 +34,7 @@ const Kanban = () => {
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName");
 
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
@@ -227,7 +228,7 @@ const Kanban = () => {
       setLoading(true);
       
       const commentObj = { 
-        author: "Usuario", // Aquí puedes obtener el nombre del usuario actual
+        author: userName, // Aquí puedes obtener el nombre del usuario actual
         text: newComment,
         timestamp: new Date().toISOString()
       };
