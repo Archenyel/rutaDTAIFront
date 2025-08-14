@@ -213,7 +213,7 @@ const Kanban = () => {
 
     try {
       // Envía el archivo al endpoint de backend
-      const response = await fetch('http://localhost:3000/upload', {
+      const response = await fetch('https://wachapelisbackend.onrender.com/upload', {
         method: 'POST',
         body: formData,
       });
