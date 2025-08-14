@@ -506,6 +506,14 @@ const AdminKanban = () => {
                             </small>
                           </div>
                         )}
+                        {tarea.archivoUrl && (
+                          <div className="mt-1">
+                            <small className="text-info">
+                              <i className="bi bi-file-earmark-pdf me-1"></i>
+                              Archivo adjunto
+                            </small>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td>
@@ -561,8 +569,8 @@ const AdminKanban = () => {
                             setEditingTask(tarea);
                             setShowEditModal(true);
                           }}
-                          disabled={loading.acciones || tarea.firmadoPor}
-                          title={tarea.firmadoPor ? "Tarea ya firmada" : "Editar"}
+                          disabled={loading.acciones}
+                          title="Editar"
                         >
                           <i className="bi bi-pencil"></i>
                         </Button>
@@ -580,6 +588,18 @@ const AdminKanban = () => {
                           <i className="bi bi-chat-left-text"></i>
                           <span className="ms-1">{tarea.comentarios?.length || 0}</span>
                         </Button>
+
+                        {tarea.archivoUrl && (
+                          <Button
+                            variant="outline-info"
+                            size="sm"
+                            onClick={() => window.open(tarea.archivoUrl, '_blank')}
+                            disabled={loading.acciones}
+                            title="Ver archivo PDF"
+                          >
+                            <i className="bi bi-file-earmark-pdf"></i>
+                          </Button>
+                        )}
 
                         {!tarea.firmadoPor && tarea.estado === 'En revisión' && (
                           <Button
@@ -600,8 +620,8 @@ const AdminKanban = () => {
                           variant="outline-danger"
                           size="sm"
                           onClick={() => handleDeleteTask(tarea.id)}
-                          disabled={loading.acciones || tarea.firmadoPor}
-                          title={tarea.firmadoPor ? "No se puede eliminar tarea firmada" : "Eliminar"}
+                          disabled={loading.acciones}
+                          title="Eliminar"
                         >
                           <i className="bi bi-trash"></i>
                         </Button>
@@ -867,6 +887,36 @@ const AdminKanban = () => {
                     />
                   </Form.Group>
                 </Col>
+
+                {/* Mostrar archivo adjunto si existe */}
+                {editingTask.archivoUrl && (
+                  <Col md={12}>
+                    <div className="alert alert-info">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <i className="bi bi-file-earmark-pdf me-2"></i>
+                          <strong>Archivo PDF adjunto:</strong>
+                        </div>
+                        <a 
+                          href={editingTask.archivoUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="btn btn-sm btn-outline-primary"
+                        >
+                          <i className="bi bi-box-arrow-up-right me-1"></i>
+                          Ver PDF
+                        </a>
+                      </div>
+                      <div className="mt-2">
+                        <small className="text-muted">
+                          URL: {editingTask.archivoUrl.length > 60 ? 
+                            editingTask.archivoUrl.substring(0, 60) + '...' : 
+                            editingTask.archivoUrl}
+                        </small>
+                      </div>
+                    </div>
+                  </Col>
+                )}
               </Row>
               
               <div className="d-flex justify-content-end mt-4 gap-2">
@@ -906,6 +956,27 @@ const AdminKanban = () => {
         <Modal.Body>
           {selectedTask && (
             <>
+              {/* Información del archivo adjunto si existe */}
+              {selectedTask.archivoUrl && (
+                <div className="alert alert-info mb-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <i className="bi bi-file-earmark-pdf me-2"></i>
+                      <strong>Archivo PDF adjunto:</strong>
+                    </div>
+                    <a 
+                      href={selectedTask.archivoUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <i className="bi bi-box-arrow-up-right me-1"></i>
+                      Abrir PDF
+                    </a>
+                  </div>
+                </div>
+              )}
+
               <div 
                 style={{ 
                   maxHeight: '300px', 

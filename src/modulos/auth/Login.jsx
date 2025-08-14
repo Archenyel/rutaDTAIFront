@@ -168,24 +168,25 @@ const Login = () => {
                         </a>
                       </p>
                     </div>
-
-                    <div className="test-credentials">
-  <p className="credentials-title">
-    Credenciales de prueba:
-  </p>
-  <div className="credentials-group">
-    <p className="credential-role">SuperAdmin:</p>
-    <p className="credential-item">Usuario: superadmin | Contraseña: 1234</p>
-  </div>
-  <div className="credentials-group">
-    <p className="credential-role">Admin:</p>
-    <p className="credential-item">Usuario: admin | Contraseña: 1234</p>
-  </div>
-  <div className="credentials-group">
-    <p className="credential-role">Alumno:</p>
-    <p className="credential-item">Usuario: usuario | Contraseña: 1234</p>
-  </div>
-</div>
+                    <p className="credentials-title">Credenciales de prueba:</p>
+                    <div className="credentials-group">
+                      <p className="credential-role">SuperAdmin:</p>
+                      <p className="credential-item">
+                        Usuario: superadmin | Contraseña: 1234
+                      </p>
+                    </div>
+                    <div className="credentials-group">
+                      <p className="credential-role">Admin:</p>
+                      <p className="credential-item">
+                        Usuario: admin | Contraseña: 1234
+                      </p>
+                    </div>
+                    <div className="credentials-group">
+                      <p className="credential-role">Alumno:</p>
+                      <p className="credential-item">
+                        Usuario: usuario | Contraseña: 1234
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -59,17 +59,17 @@ const Layout = ({ children }) => {
         <>
           <button
             className="header-btn me-2"
-            onClick={() => navigate("/listaProyectos")}
-            type="button"
-          >
-            Proyectos
-          </button>
-          <button
-            className="header-btn me-2"
             onClick={() => navigate("/programas")}
             type="button"
           >
             Programas
+          </button>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/listaProyectos")}
+            type="button"
+          >
+            Proyectos
           </button>
         </>
       );
@@ -81,10 +81,10 @@ const Layout = ({ children }) => {
         <>
           <button
             className="header-btn me-2"
-            onClick={() => navigate("/SuperadminKanban")}
+            onClick={() => navigate("/portafolios")}
             type="button"
           >
-            Tareas
+            Portafolios
           </button>
           <button
             className="header-btn me-2"
@@ -95,10 +95,17 @@ const Layout = ({ children }) => {
           </button>
           <button
             className="header-btn me-2"
-            onClick={() => navigate("/portafolios")}
+            onClick={() => navigate("/listaProyectos")}
             type="button"
           >
-            Portafolios
+            Proyectos
+          </button>
+          <button
+            className="header-btn me-2"
+            onClick={() => navigate("/SuperadminKanban")}
+            type="button"
+          >
+            Tareas
           </button>
         </>
       );
@@ -202,7 +209,8 @@ const Layout = ({ children }) => {
       <footer className="layout-footer">
         <div className="container text-center">
           <p className="mb-0">
-            © 2025 RutaDTAI - Sistema de Gestión de Proyectos | Universidad Tecnológica de Querétaro
+            © 2025 RutaDTAI - Sistema de Gestión de Proyectos | Universidad
+            Tecnológica de Querétaro
           </p>
         </div>
       </footer>

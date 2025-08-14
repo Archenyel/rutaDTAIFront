@@ -24,6 +24,8 @@ const Kanban = () => {
   const [showFileModal, setShowFileModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [fileUrl, setFileUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(null);
 
   // Estados para modal de comentarios
@@ -179,10 +181,64 @@ const Kanban = () => {
   const handleAddFile = (task) => {
     setSelectedTask(task);
     setFileUrl(task.fileUrl || "");
+    setSelectedFile(null);
     setShowFileModal(true);
   };
 
-  const saveFileUrl = async () => {
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Validar que sea un archivo PDF
+      if (file.type !== 'application/pdf') {
+        setError('Solo se permiten archivos PDF');
+        setTimeout(() => setError(null), 3000);
+        return;
+      }
+      setSelectedFile(file);
+      setFileUrl(""); // Limpiar URL manual si se selecciona archivo
+    }
+  };
+
+  const handleUploadToGCS = async () => {
+    if (!selectedFile) {
+      setError('Por favor, selecciona un archivo PDF primero.');
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+
+    setUploading(true);
+    
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      // Envía el archivo al endpoint de backend
+      const response = await fetch('http://localhost:3000/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setFileUrl(result.publicUrl);
+        setSuccess(`¡Archivo subido con éxito!`);
+        setTimeout(() => setSuccess(null), 3000);
+        // Guardar automáticamente la URL después de la subida
+        await saveFileUrlToTask(result.publicUrl);
+      } else {
+        setError(`Error del servidor: ${result.error}`);
+        setTimeout(() => setError(null), 3000);
+      }
+    } catch (error) {
+      console.error('Error al subir el archivo:', error);
+      setError('Hubo un error de conexión al servidor.');
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const saveFileUrlToTask = async (url = fileUrl) => {
     if (!selectedTask) return;
 
     try {
@@ -196,7 +252,7 @@ const Kanban = () => {
         responsable: selectedTask.responsable,
         progreso: selectedTask.progress,
         proyectoId: proyectoId,
-        archivoUrl: fileUrl
+        archivoUrl: url
       });
 
       // Actualizar la tarea en el estado local
@@ -204,7 +260,7 @@ const Kanban = () => {
       Object.keys(updatedColumns).forEach(columnName => {
         updatedColumns[columnName] = updatedColumns[columnName].map(task => 
           task.id === selectedTask.id 
-            ? { ...task, fileUrl: fileUrl }
+            ? { ...task, fileUrl: url }
             : task
         );
       });
@@ -213,6 +269,7 @@ const Kanban = () => {
       setShowFileModal(false);
       setSelectedTask(null);
       setFileUrl("");
+      setSelectedFile(null);
       setSuccess('Archivo adjuntado correctamente');
       setTimeout(() => setSuccess(null), 3000);
       
@@ -413,9 +470,9 @@ const Kanban = () => {
                                               e.stopPropagation();
                                               handleAddFile(task);
                                             }}
-                                            title="Adjuntar archivo"
+                                            title="Adjuntar PDF"
                                           >
-                                            <i className="bi bi-paperclip"></i>
+                                            <i className="bi bi-file-earmark-pdf"></i>
                                           </button>
                                           <button
                                             className="btn btn-sm btn-outline-secondary"
@@ -455,8 +512,8 @@ const Kanban = () => {
                                             className="btn btn-sm btn-outline-success d-flex align-items-center"
                                             onClick={(e) => e.stopPropagation()}
                                           >
-                                            <i className="bi bi-file-earmark-text me-1"></i>
-                                            Ver archivo
+                                            <i className="bi bi-file-earmark-pdf me-1"></i>
+                                            Ver PDF
                                           </a>
                                         </div>
                                       )}
@@ -499,62 +556,164 @@ const Kanban = () => {
         </div>
 
         {/* Modal para adjuntar archivo */}
-        <Modal show={showFileModal} onHide={() => setShowFileModal(false)} centered>
+        <Modal show={showFileModal} onHide={() => setShowFileModal(false)} centered size="lg">
           <Modal.Header closeButton>
             <Modal.Title>
               <i className="bi bi-paperclip me-2"></i>
-              Adjuntar Archivo - {selectedTask?.title}
+              Adjuntar Archivo PDF - {selectedTask?.title}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label className="fw-semibold">
-                  <i className="bi bi-link-45deg me-2"></i>
-                  URL del archivo de Google Drive
-                </Form.Label>
-                <Form.Control
-                  type="url"
-                  value={fileUrl}
-                  onChange={(e) => setFileUrl(e.target.value)}
-                  placeholder="https://drive.google.com/file/d/..."
-                />
-                <Form.Text className="text-muted">
-                  Pega aquí el enlace compartible de tu archivo de Google Drive
-                </Form.Text>
-              </Form.Group>
-              {fileUrl && (
-                <div className="alert alert-info">
-                  <i className="bi bi-info-circle me-2"></i>
-                  <strong>Vista previa:</strong>
-                  <br />
-                  <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
-                    {fileUrl}
-                  </a>
+            <div className="row">
+              {/* Opción 1: Subir archivo a Google Cloud Storage */}
+              <div className="col-md-6">
+                <div className="card h-100">
+                  <div className="card-header bg-primary text-white">
+                    <h6 className="mb-0">
+                      <i className="bi bi-cloud-upload me-2"></i>
+                      Subir archivo PDF
+                    </h6>
+                  </div>
+                  <div className="card-body">
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">
+                        Seleccionar archivo PDF
+                      </Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleFileChange}
+                        disabled={uploading}
+                      />
+                      <Form.Text className="text-muted">
+                        Solo se aceptan archivos PDF (máximo 10MB)
+                      </Form.Text>
+                    </Form.Group>
+                    
+                    {selectedFile && (
+                      <div className="alert alert-info">
+                        <i className="bi bi-file-earmark-pdf me-2"></i>
+                        <strong>Archivo seleccionado:</strong><br />
+                        {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                      </div>
+                    )}
+
+                    <Button 
+                      variant="primary" 
+                      onClick={handleUploadToGCS}
+                      disabled={!selectedFile || uploading}
+                      className="w-100"
+                    >
+                      {uploading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                          Subiendo a Google Cloud...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-cloud-upload me-2"></i>
+                          Subir a Google Cloud Storage
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
-              )}
-            </Form>
+              </div>
+
+              {/* Opción 2: Enlace manual */}
+              <div className="col-md-6">
+                <div className="card h-100">
+                  <div className="card-header bg-secondary text-white">
+                    <h6 className="mb-0">
+                      <i className="bi bi-link-45deg me-2"></i>
+                      Enlace manual
+                    </h6>
+                  </div>
+                  <div className="card-body">
+                    <Form.Group className="mb-3">
+                      <Form.Label className="fw-semibold">
+                        URL del archivo
+                      </Form.Label>
+                      <Form.Control
+                        type="url"
+                        value={fileUrl}
+                        onChange={(e) => setFileUrl(e.target.value)}
+                        placeholder="https://storage.googleapis.com/..."
+                        disabled={uploading || selectedFile}
+                      />
+                      <Form.Text className="text-muted">
+                        Pega aquí el enlace directo al archivo
+                      </Form.Text>
+                    </Form.Group>
+
+                    {fileUrl && !selectedFile && (
+                      <div className="alert alert-info">
+                        <i className="bi bi-info-circle me-2"></i>
+                        <strong>Vista previa:</strong>
+                        <br />
+                        <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
+                          {fileUrl.length > 50 ? fileUrl.substring(0, 50) + '...' : fileUrl}
+                        </a>
+                      </div>
+                    )}
+
+                    <Button 
+                      variant="secondary" 
+                      onClick={() => saveFileUrlToTask()}
+                      disabled={!fileUrl || loading || selectedFile}
+                      className="w-100"
+                    >
+                      {loading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                          Guardando...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-check me-2"></i>
+                          Guardar enlace
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Archivo actual si existe */}
+            {selectedTask?.fileUrl && (
+              <div className="mt-3">
+                <div className="alert alert-success">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <i className="bi bi-file-earmark-pdf me-2"></i>
+                      <strong>Archivo actual:</strong>
+                    </div>
+                    <a 
+                      href={selectedTask.fileUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-success"
+                    >
+                      <i className="bi bi-box-arrow-up-right me-1"></i>
+                      Ver archivo
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="outline-secondary" onClick={() => setShowFileModal(false)}>
-              Cancelar
-            </Button>
             <Button 
-              variant="primary" 
-              onClick={saveFileUrl}
-              disabled={loading}
+              variant="outline-secondary" 
+              onClick={() => {
+                setShowFileModal(false);
+                setSelectedFile(null);
+                setFileUrl("");
+              }}
+              disabled={uploading}
             >
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-check me-2"></i>
-                  Guardar
-                </>
-              )}
+              Cancelar
             </Button>
           </Modal.Footer>
         </Modal>
@@ -575,8 +734,8 @@ const Kanban = () => {
                   <div className="alert alert-info mb-3">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
-                        <i className="bi bi-paperclip me-2"></i>
-                        <strong>Archivo adjunto:</strong>
+                        <i className="bi bi-file-earmark-pdf me-2"></i>
+                        <strong>Archivo PDF adjunto:</strong>
                       </div>
                       <a 
                         href={selectedTask.fileUrl} 
@@ -585,7 +744,7 @@ const Kanban = () => {
                         className="btn btn-sm btn-outline-primary"
                       >
                         <i className="bi bi-box-arrow-up-right me-1"></i>
-                        Abrir en Drive
+                        Abrir PDF
                       </a>
                     </div>
                   </div>

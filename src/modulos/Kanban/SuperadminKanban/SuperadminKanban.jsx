@@ -610,6 +610,25 @@ const SuperadminKanban = () => {
           <p className="lead text-muted">
             Gestión avanzada de tareas para Superadministrador
           </p>
+          
+          {/* Botón para ir a Lista de Proyectos */}
+          <div className="mt-4">
+            <div className="alert alert-info d-inline-block mb-3">
+              <i className="bi bi-info-circle me-2"></i>
+              <span className="fw-semibold">Para un mejor control de las tareas y proyectos, utiliza la vista completa</span>
+            </div>
+            <div>
+              <RBButton 
+                variant="outline-primary" 
+                size="lg"
+                onClick={() => navigate('/listaProyectos')}
+                className="px-4 py-2"
+              >
+                <i className="bi bi-list-ul me-2"></i>
+                Ir a Lista de Proyectos
+              </RBButton>
+            </div>
+          </div>
         </header>
 
         {/* Alertas */}
@@ -626,51 +645,6 @@ const SuperadminKanban = () => {
             {success}
           </Alert>
         )}
-
-        {/* Selector de proyecto */}
-        <div className="card shadow-lg mb-4">
-          <div className={`card-header bg-gradient ${labelColor}`}>
-            <h3 className="card-title mb-0">
-              <i className="bi bi-folder me-2" /> Seleccionar Proyecto
-            </h3>
-          </div>
-          <div className="card-body">
-            <div className="row">
-              <div className="col-md-6">
-                <select
-                  className="form-select form-select-lg mb-3"
-                  value={selectedProject ? selectedProject.id : ""}
-                  onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSelectedProject(null);
-                    } else {
-                      const projectId = parseInt(e.target.value);
-                      setSelectedProject(projects.find(p => p.id === projectId) || null);
-                    }
-                  }}
-                >
-                  <option value="">Todos los proyectos</option>
-                  {projects.map(project => (
-                    <option key={project.id} value={project.id}>
-                      {project.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {selectedProject && (
-                <div className="col-md-6">
-                  <div className="project-info">
-                    <h5>{selectedProject.nombre}</h5>
-                    <p>{selectedProject.descripcion}</p>
-                    <small>
-                      {new Date(selectedProject.fechaInicio).toLocaleDateString()} - {new Date(selectedProject.fechaFin).toLocaleDateString()}
-                    </small>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
 
         {/* Formulario nueva tarea */}
         {selectedProject && (

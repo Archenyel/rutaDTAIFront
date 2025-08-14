@@ -166,61 +166,6 @@ const DashboardSuperadmin = ({ user }) => {
           </Col>
         </Row>
 
-        {/* Sección de Estadísticas */}
-        <Row className="g-4 mb-5">
-          {[
-            {
-              key: "proyectos",
-              label: "Proyectos Totales",
-              icon: "bi-folder-check",
-              value: generalStats.totalProyectos,
-              subtitle: `${generalStats.proyectosActivos} activos`,
-              bgGradient: "gradient-primary",
-            },
-            {
-              key: "tareas",
-              label: "Tareas Totales",
-              icon: "bi-list-check",
-              value: generalStats.totalTareas,
-              subtitle: `${generalStats.tareasCompletadas} completadas`,
-              bgGradient: "gradient-success",
-            },
-            {
-              key: "alumnos",
-              label: "Alumnos Totales",
-              icon: "bi-people",
-              value: generalStats.totalAlumnos,
-              subtitle: `${generalStats.alumnosActivos} activos`,
-              bgGradient: "gradient-info",
-            },
-            {
-              key: "documentos",
-              label: "Documentos",
-              icon: "bi-file-earmark-text",
-              value: generalStats.totalDocumentos,
-              subtitle: `Historial general`,
-              bgGradient: "gradient-warning",
-            },
-          ].map((card, index) => (
-            <Col md={6} lg={3} key={card.key}>
-              <Card
-                className={`admin-stat-card shadow-sm border-0 text-center ${card.bgGradient} fade-in`}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <Card.Body className="p-4">
-                  <div className="icon-container mb-3">
-                    <i className={`bi ${card.icon} fs-1 text-white`}></i>
-                  </div>
-                  <Card.Title className="text-uppercase small fw-semibold text-white-50 mb-2">
-                    {card.label}
-                  </Card.Title>
-                  <h2 className="fw-bold mb-1 text-white">{card.value}</h2>
-                  <small className="text-white-50">{card.subtitle}</small>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
       </Container>
     </Layout>
   );
