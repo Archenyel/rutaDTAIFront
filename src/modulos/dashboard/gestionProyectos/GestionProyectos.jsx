@@ -22,7 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import "../gestionProyectos/gestionProyectos.css";
+import "./gestionProyectos.css";
 
 const GestionProyectos = ({ user }) => {
   const [theme, setTheme] = useState("light");
